@@ -17,6 +17,32 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
   // Load data
   // local for production
-  var data = "../resources/priceGrowers_colombianMilds.csv"
+  var production_data = "../resources/totalProduction_april.csv"
+
+  // Grab data with d3
+  d3.csv(production_data).then(function(data) {
+    
+    // Create choropleth layer
+    geo_data = L.choropleth(data, {
+
+      // Define what property to use
+      valueProperty: 2,
+
+      // Set color scale
+      scale: ["#ffffb2", "#b10026"],
+
+      // Number of breaks in number range
+      steps: 50,
+
+      // Chosse a mode: "q" for quartile, "e" for equidistant, "k" for k-means
+      mode: "q",
+      style: {
+        // Border color
+        color: "#fff",
+        weight: 1,
+        fillOpacity: 0.8
+      },
+    }).addTo(myMap);
+  });
 
   
