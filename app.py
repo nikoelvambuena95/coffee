@@ -62,7 +62,7 @@ def routes():
         f"Available routes:<br>"
         f"/api/v1.0/export_countries<br>"
         f"/api/v1.0/import_countries<br>"
-        f"/api/v1.0/country_coordinates<br>"
+        f"/api/v1.0/retail_prices<br>"
     )
 
 @app.route("/api/v1.0/export_countries")
@@ -120,6 +120,28 @@ def production():
         import_countries_list.append(import_countries_dict)
     
     return jsonify(import_countries_list)
+
+@app.route("/api/v1.0/retail_prices")
+def retail():
+    print("Server access: retail prices")
+    s = Session(bind=engine)
+
+    sql_query = text("SELECT * FROM Retail_Prices ORDER BY country ASC")
+    retail_price_results = s.execute(sql_query).all()
+
+    retail_price_list = []
+    for row in retail_price_results:
+        for i in row:
+            year = row[1]
+            country = row[2]
+            cents_perlb = row[3]
+        retail_price_dict = {}
+        retail_price_dict['year'] = year
+        retail_price_dict['country'] = country
+        retail_price_dict['cents_perlb'] = cents_perlb
+        retail_price_list.append(retail_price_dict)
+    
+    return jsonify(retail_price_list)
 
 if __name__=="__main__":
     app.run(debug = True)
