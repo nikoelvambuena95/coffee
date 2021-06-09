@@ -11,38 +11,28 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     maxZoom: 8,
     minZoom:5,
     zoomOffset: -1,
-    id: "mapbox/streets-v11",
+    id: "mapbox/light-v10",
     accessToken: API_KEY
   }).addTo(myMap);
 
   // Load data
-  // local for production
-  var production_data = "../resources/totalProduction_april.csv"
+  var production_data = "/api/v1.0/export_countries"
 
-  // Grab data with d3
-  d3.csv(production_data).then(function(data) {
-    
-    // Create choropleth layer
-    geo_data = L.choropleth(data, {
+  d3.json(production_data).then(function(data){
+    // Loop through production_data
+    for (var i = 0; i < data.length; i++) {
+    console.log(data[i].location),
+    console.log(data[i].production)
 
-      // Define what property to use
-      valueProperty: 2,
-
-      // Set color scale
-      scale: ["#ffffb2", "#b10026"],
-
-      // Number of breaks in number range
-      steps: 50,
-
-      // Chosse a mode: "q" for quartile, "e" for equidistant, "k" for k-means
-      mode: "q",
-      style: {
-        // Border color
-        color: "#fff",
-        weight: 1,
-        fillOpacity: 0.8
-      },
-    }).addTo(myMap);
-  });
+    // Add circles to the map 
+    L.circle(data[i].location, {
+      fillOpacity: 0.75,
+      color: 'white',
+      fillColor: 'red',
+      // Adjust radius
+      radius: data[i].production * 50
+    }).bindPopup("<h1>" + data[i].country + "</h1> <hr> <h3>Export:" + data[i].production + "</h3>").addTo(myMap);
+  };
+  })
 
   

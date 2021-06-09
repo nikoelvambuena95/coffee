@@ -80,15 +80,14 @@ def trade():
         for i in row:
             year = row[0]
             country = row[1]
-            latitude = row[2]
-            longitude = row[3]
+            latitude = float(row[2])
+            longitude = float(row[3])
             production = row[4]
             export_1k = row[5]
         export_countries_dict = {}
         export_countries_dict['year'] = year
         export_countries_dict['country'] = country
-        export_countries_dict['latitude'] = latitude
-        export_countries_dict['longitude'] = longitude
+        export_countries_dict['location'] = [latitude, longitude]
         export_countries_dict['production'] = production
         export_countries_dict['export_1k'] = export_1k
         export_countries_list.append(export_countries_dict)
