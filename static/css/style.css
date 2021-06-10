@@ -11,3 +11,51 @@ html {
   width: 100%;
 
 }
+
+#body-box {
+  height: 85%;
+  width: 85%;
+}
+
+#map-box {
+  height: 50%;
+  width: 70%;
+}
+
+#bar-box{
+  display: block;
+  float: left;
+  height: 100%;
+  width: 30%;
+  background-color: indianred;
+}
+
+#info-box {
+  height: 100%;
+  width: 100%;
+  border: black;
+}
+
+#bar-info-box {
+  display: block;
+  float: left;
+  height: 100%;
+  width:30%;
+  background-color: slateblue;
+}
+
+#country-info-box {
+  display: block;
+  float: left;
+  height: 100%;
+  width: 30%;
+  background-color: seagreen;
+}
+
+#ICO-info-box {
+  display: block;
+  float: left;
+  height: 100%;
+  width: 30%;
+  background-color: yellowgreen;
+}
