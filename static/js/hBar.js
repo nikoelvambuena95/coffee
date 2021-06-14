@@ -1,3 +1,8 @@
+// TO-DO
+// - Filter by production/export_1k
+// - Add a Filter drop-down
+
+
 // Set the dimensions and margins of the graph
 var margin = {top: 60, right: 30, bottom: 40, left: 90},
     width = 460 - margin.left - margin.right,
@@ -16,18 +21,18 @@ var svg = d3.select("#horizontal_bar")
 data = d3.json("/api/v1.0/export_countries").then(function(data){
 
     const new_data = data.filter(function(d) {
-        return d.year == "2010"
+        return d.year == "1998"
     });
 
     new_data.sort(function (a, b){
         return d3.descending(a.production, b.production)
     });
 
-    console.log(new_data)
+    const xMax = new_data[0]['production']
 
     // Add X axis
     var x = d3.scaleLinear()
-        .domain([0, 13000])
+        .domain([0, xMax])
         .range([ 0, width]);
 
     svg.append("g")
