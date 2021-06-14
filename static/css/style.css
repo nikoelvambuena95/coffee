@@ -1,61 +1,27 @@
+/* svg {
+  height: 500px;
+  width: 960px;
+} */
+
 body {
-    padding: 0;
-    margin: 0;
-  }
-  
-
-#map,
-body,
-html {
-  height: 100%;
-  width: 100%;
-
+  font-family: "Arial", sans-serif;
 }
 
-#body-box {
-  height: 85%;
-  width: 85%;
+.bar {
+  fill: #5f89ad;
 }
 
-#map-box {
-  height: 50%;
-  width: 70%;
+.axis {
+  font-size: 13px;
 }
 
-#bar-box{
-  display: block;
-  float: left;
-  height: 100%;
-  width: 30%;
-  background-color: indianred;
+.axis path,
+.axis line {
+  fill: none;
+  display: none;
 }
 
-#info-box {
-  height: 100%;
-  width: 100%;
-  border: black;
+.label {
+  font-size: 13px;
 }
 
-#bar-info-box {
-  display: block;
-  float: left;
-  height: 100%;
-  width:30%;
-  background-color: slateblue;
-}
-
-#country-info-box {
-  display: block;
-  float: left;
-  height: 100%;
-  width: 30%;
-  background-color: seagreen;
-}
-
-#ICO-info-box {
-  display: block;
-  float: left;
-  height: 100%;
-  width: 30%;
-  background-color: yellowgreen;
-}
