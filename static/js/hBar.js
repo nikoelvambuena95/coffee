@@ -1,7 +1,7 @@
 // Set the dimensions and margins of the graph
-var margin = {top: 20, right: 30, bottom: 40, left: 90},
+var margin = {top: 60, right: 30, bottom: 40, left: 90},
     width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 600 - margin.top - margin.bottom;
 
 // Append the svg object to the body of the page
 var svg = d3.select("#horizontal_bar")
@@ -15,7 +15,15 @@ var svg = d3.select("#horizontal_bar")
 // Load data from API route
 data = d3.json("/api/v1.0/export_countries").then(function(data){
 
-    console.log(data)
+    const new_data = data.filter(function(d) {
+        return d.year == "2010"
+    });
+
+    new_data.sort(function (a, b){
+        return d3.descending(a.production, b.production)
+    });
+
+    console.log(new_data)
 
     // Add X axis
     var x = d3.scaleLinear()
@@ -32,16 +40,19 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
     // Add Y axis
     var y = d3.scaleBand()
         .range([ 0, height ])
-        .domain(data.map(function(d) { return d.country; }))
-        .padding(.1);
+        .domain(new_data.map(function(d) { return d.country; }))
+        .padding(.3);
     
     svg.append("g")
         .call(d3.axisLeft(y))
     
-    //Bars
+    // Add Bars
     svg.selectAll("myRect")
-        .data(data)
+        .data(new_data)
         .enter()
+        // .filter(function(d) {
+        //     return d.year == "1990"
+        // })
         .append("rect")
         .attr("x", x(0) )
         .attr("y", function(d) { return y(d.country); })
