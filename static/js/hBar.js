@@ -12,8 +12,6 @@ var svg = d3.select("#horizontal_bar")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-
-    
 // Load data from API route
 data = d3.json("/api/v1.0/export_countries").then(function(data){
 
@@ -35,8 +33,8 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
     .data(selectionYear)
     .enter()
     .append('option')
-    .text(function (d) { return d; })
-    .attr("value", function (d) { return d ;})
+        .text(function (d) { return d; })
+        .attr("value", function (d) { return d ;})
     
     // Filter data by year
     var inputYear = 1990
@@ -65,12 +63,12 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 
     svg
         .append("g")
-        .attr("class", "xAxis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
-        .selectAll("text")
-        .attr("transform", "translate(-10,0)rotate(-45)")
-        .style("text-anchor", "end"); 
+            .attr("class", "xAxis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end"); 
     
     // Add Y-axis
     var y = d3.scaleBand()
@@ -80,19 +78,19 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
     
     svg
         .append("g")
-        .attr("class", "yAxis")
-        .call(d3.axisLeft(y))
+            .attr("class", "yAxis")
+            .call(d3.axisLeft(y))
     
     // Add Bars
     var bars = svg.selectAll("myRect")
         .data(new_data)
         .enter()
         .append("rect")
-        .attr("x", x(0) )
-        .attr("y", function(d) { return y(d.country); })
-        .attr("width", function(d) { return x(d.production); })
-        .attr("height", y.bandwidth() )
-        .attr("fill", "#69b3a2")
+            .attr("x", x(0) )
+            .attr("y", function(d) { return y(d.country); })
+            .attr("width", function(d) { return x(d.production); })
+            .attr("height", y.bandwidth() )
+            .attr("fill", "#69b3a2")
 
     // Create function to update chart
     function update(inputYear) {
@@ -116,14 +114,14 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
             .select(".xAxis").remove();
         svg
             .append("g")
-            .transition()
-            .duration(1700)
-            .attr("class", "xAxis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
-            .selectAll("text")
-            .attr("transform", "translate(-10,0)rotate(-45)")
-            .style("text-anchor", "end"); 
+                .transition()
+                .duration(1700)
+                .attr("class", "xAxis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end"); 
 
 
         // Update Y-axis
@@ -137,10 +135,10 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         
         svg
             .append("g")
-            .transition()
-            .duration(1700)
-            .attr("class", "yAxis")
-            .call(d3.axisLeft(y))
+                .transition()
+                .duration(1700)
+                .attr("class", "yAxis")
+                .call(d3.axisLeft(y))
 
         // Update bars with filtered data
         bars.data(dataFilter)
