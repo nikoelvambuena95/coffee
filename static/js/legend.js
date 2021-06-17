@@ -26,26 +26,37 @@ var data = JSON.parse(legendData)
 
 // Add square 
 var size = 20
-svg.selectAll("mydots")
-  .data(data['legend_key']) // 'legend_key' JSON data object
-  .enter()
-  .append("rect")
-    .attr("x", 100)
-    .attr("y", function(d, i){ return 100 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
-    .attr("width", size)
-    .attr("height", size)
-    .style("fill", function(d){ return d.color})
+var square = svg.selectAll("mySquares")
+    .data(data['legend_key']) // 'legend_key' JSON data object
+    .enter()
+    .append("rect")
+      .attr("x", 100)
+      .attr("y", function(d, i){ return 100 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("width", size)
+      .attr("height", size)
+      .style("fill", function(d){ return d.color})
 ;
 
 // Add text
-svg.selectAll("mylabels")
-  .data(data['legend_key']) // 'legend_key' JSON data object
-  .enter()
-  .append("text")
-    .attr("x", 100 + size*1.2)
-    .attr("y", function(d,i){ return 100 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-    .style("fill", function(d){ return d.color})
-    .text(function(d){ return d.dataType})
-    .attr("text-anchor", "left")
-    .style("alignment-baseline", "middle")
+var legendText = svg.selectAll("mylabels")
+    .data(data['legend_key']) // 'legend_key' JSON data object
+    .enter()
+    .append("text")
+      .attr("x", 100 + size*1.2)
+      .attr("y", function(d,i){ return 100 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", function(d){ return d.color})
+      .text(function(d){ return d.dataType})
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")
 ;
+
+// Filter on Legend
+square
+  .on("click", function(d){
+    $.getScript("hBar.js", exportChart())
+  });
+
+legendText
+  .on("click", function(d){
+    $.getScript("hBar.js", productionChart())
+  })
