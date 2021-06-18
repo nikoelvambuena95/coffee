@@ -1,3 +1,5 @@
+
+
 // Set the dimensions and margins of the graph
 var margin = {top: 60, right: 30, bottom: 40, left: 90},
     width = 460 - margin.left - margin.right,
@@ -53,10 +55,10 @@ var legendText = svg.selectAll("mylabels")
 // Filter on Legend
 square
   .on("click", function(d){
-    $.getScript("hBar.js", exportChart())
+    exportChart()
   });
 
 legendText
   .on("click", function(d){
-    $.getScript("hBar.js", productionChart())
-  })
+    productionChart()
+  });

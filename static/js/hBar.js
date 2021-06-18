@@ -14,6 +14,7 @@ var svg = d3.select("#horizontal_bar")
 
 // Load data from API route
 data = d3.json("/api/v1.0/export_countries").then(function(data){
+    console.log("initial data")
     console.log(data) // display data
     // Create array for input years
     selectionYear = []
@@ -132,7 +133,6 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 
         svg
             .select(".yAxis").remove();
-        
         svg
             .append("g")
                 .transition()
@@ -145,7 +145,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
             .transition()
             .duration(1000)
             .attr("y", function(d) { return y(d.country); })
-            .attr("width", function(d) { return x(d.production); })
+            .attr("width", function(d) { return x(d.production); });
       };
 
     // When the button is changed, run the update function
@@ -176,8 +176,8 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 
 // Define function that generates "production" bar chart
 function productionChart() {
-    data = d3.json("/api/v1.0/export_countries").then(function(data){
-        
+    data = d3.json("/api/v1.0/export_countries").then(function(data) {
+        console.log("production chart") // Confirm production function runs
         // Create array for input years
         selectionYear = []
         
@@ -190,6 +190,8 @@ function productionChart() {
                 selectionYear.push(year)
             }
         };
+
+        d3.selectAll('option').remove();// Remove input years from previous chart
     
         d3.select("#data_year")
         .selectAll('myOptions')
@@ -197,7 +199,7 @@ function productionChart() {
         .enter()
         .append('option')
             .text(function (d) { return d; })
-            .attr("value", function (d) { return d ;})
+            .attr("value", function (d) { return d ;});
         
         // Filter data by year
         var inputYear = 1990
@@ -246,24 +248,29 @@ function productionChart() {
         svg
             .append("g")
                 .attr("class", "yAxis")
-                .call(d3.axisLeft(y))
+                .call(d3.axisLeft(y));
         
         // Add Bars
-        var bars = svg.selectAll("myRect")
+        svg
+            .selectAll("rect").remove();// Remove bars from pervious chart
+
+        svg.selectAll("myRect")
             .data(new_data)
             .enter()
             .append("rect")
+                .transition()
+                .duration(1700)
                 .attr("x", x(0) )
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.production); })
                 .attr("height", y.bandwidth() )
-                .attr("fill", "#31cc9b")
+                .attr("fill", "#31cc9b");
     
         // Create function to update chart
         function update(inputYear) {
     
             // Create new data with the selected year
-            var dataFilter = data.filter(function(d){return d.year==inputYear})
+            var dataFilter = data.filter(function(d){return d.year==inputYear});
     
             // Sort filtered data
             dataFilter.sort(function (a, b){
@@ -305,14 +312,20 @@ function productionChart() {
                     .transition()
                     .duration(1700)
                     .attr("class", "yAxis")
-                    .call(d3.axisLeft(y))
-    
+                    .call(d3.axisLeft(y));
+
             // Update bars with filtered data
-            bars.data(dataFilter)
-                .transition()
-                .duration(1000)
-                .attr("y", function(d) { return y(d.country); })
-                .attr("width", function(d) { return x(d.production); })
+            // When using the "bars" variable method similar to initial load, errors occurred //
+            svg
+                .selectAll("rect")
+                .data(dataFilter)
+                    .transition()
+                    .duration(1000)
+                    .attr("y", function(d) { return y(d.country); })
+                    .attr("width", function(d) { return x(d.production); });
+
+            console.log("filtered production data")
+            console.log(dataFilter)
           };
     
         // When the button is changed, run the update function
@@ -321,8 +334,9 @@ function productionChart() {
             // Recover the chosen value
             var inputYear = d3.select(this).property("value")
     
-            // Run the update function with selected value
+            // // Run the update function with selected value
             update(inputYear)
+            console.log(inputYear)
         });
     
     });
@@ -341,7 +355,7 @@ function productionChart() {
 // Define function that generates "export" bar chart
 function exportChart() {
     data = d3.json("/api/v1.0/export_countries").then(function(data){
-        
+        console.log("export chart") // Confirm export function runs
         // Create array for input years
         selectionYear = []
         
@@ -354,6 +368,8 @@ function exportChart() {
                 selectionYear.push(year)
             }
         };
+
+        d3.selectAll('option').remove();// Remove input years from previous chart
     
         d3.select("#data_year")
         .selectAll('myOptions')
@@ -414,10 +430,14 @@ function exportChart() {
         
 
         // Add Bars
-        bars = svg.selectAll("myRect")
+        svg
+            .selectAll("rect").remove();// Remove bars from pervious chart
+        var bars = svg.selectAll("myRect")
             .data(new_data)
             .enter()
             .append("rect")
+                .transition()
+                .duration(1700)
                 .attr("x", x(0) )
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.export_1k); })
@@ -464,7 +484,6 @@ function exportChart() {
     
             svg
                 .select(".yAxis").remove();
-            
             svg
                 .append("g")
                     .transition()
@@ -473,11 +492,17 @@ function exportChart() {
                     .call(d3.axisLeft(y))
     
             // Update bars with filtered data
-            bars.data(dataFilter)
-                .transition()
-                .duration(1000)
-                .attr("y", function(d) { return y(d.country); })
-                .attr("width", function(d) { return x(d.export_1k); })
+            // When using the "bars" variable method similar to initial load, errors occurred //
+            svg
+                .selectAll("rect")
+                .data(dataFilter)
+                    .transition()
+                    .duration(1000)
+                    .attr("y", function(d) { return y(d.country); })
+                    .attr("width", function(d) { return x(d.export_1k); });
+            console.log("export data")
+            console.log(dataFilter)
+
           };
     
         // When the button is changed, run the update function
