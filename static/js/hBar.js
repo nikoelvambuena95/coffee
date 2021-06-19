@@ -177,7 +177,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 // Define function that generates "production" bar chart
 function productionChart() {
     data = d3.json("/api/v1.0/export_countries").then(function(data) {
-        console.log("production chart") // Confirm production function runs
+    
         // Create array for input years
         selectionYear = []
         
@@ -230,6 +230,8 @@ function productionChart() {
             .select(".xAxis").remove();// Remove X-axis from previous chart
         svg
             .append("g")
+                .transition()
+                .duration(2000) 
                 .attr("class", "xAxis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
@@ -247,6 +249,8 @@ function productionChart() {
             .select(".yAxis").remove();// Remove Y-axis from previous chart
         svg
             .append("g")
+                .transition()
+                .duration(2000)
                 .attr("class", "yAxis")
                 .call(d3.axisLeft(y));
         
@@ -324,8 +328,6 @@ function productionChart() {
                     .attr("y", function(d) { return y(d.country); })
                     .attr("width", function(d) { return x(d.production); });
 
-            console.log("filtered production data")
-            console.log(dataFilter)
           };
     
         // When the button is changed, run the update function
@@ -355,7 +357,7 @@ function productionChart() {
 // Define function that generates "export" bar chart
 function exportChart() {
     data = d3.json("/api/v1.0/export_countries").then(function(data){
-        console.log("export chart") // Confirm export function runs
+   
         // Create array for input years
         selectionYear = []
         
@@ -408,6 +410,8 @@ function exportChart() {
             .select(".xAxis").remove();// Remove X-axis from previous chart
         svg
             .append("g")
+                .transition()
+                .duration(2000) 
                 .attr("class", "xAxis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
@@ -425,6 +429,8 @@ function exportChart() {
             .select(".yAxis").remove();// Remove Y-axis from previous chart
         svg
             .append("g")
+                .transition()
+                .duration(2000)     
                 .attr("class", "yAxis")
                 .call(d3.axisLeft(y))
         
@@ -500,8 +506,6 @@ function exportChart() {
                     .duration(1000)
                     .attr("y", function(d) { return y(d.country); })
                     .attr("width", function(d) { return x(d.export_1k); });
-            console.log("export data")
-            console.log(dataFilter)
 
           };
     
