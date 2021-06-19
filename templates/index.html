@@ -21,11 +21,14 @@ crossorigin="" />
     <!-- Initialize a button for data type presented in horizontal bar chart -->
     <select id="data_year"></select>
 
-    <!-- Initialize a legend -->
+    <!-- Initialize a DIV legend -->
     <div id="legend"></div>
 
-    <!-- Initialize a div for the horizontal bar chart -->
+    <!-- Initialize a DIV for the horizontal bar chart -->
     <div id="horizontal_bar"></div>
+
+    <!-- Initialize an SVG for the world map-->
+    <div id="worldMap" width="400" height="300"></div>
 
 
 
@@ -43,8 +46,10 @@ crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js"
     integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q=="
     crossorigin=""></script>
-    <!-- d3 JavaScript -->
+    <!-- d3 -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- d3 Geo-projection -->
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
     <!-- API Key -->
     <script type="text/javascript" src="../static/js/config.js"></script>
     <!-- Map JS -->
