@@ -2,11 +2,11 @@
 
 // Set the dimensions and margins of the graph
 var margin = {top: 60, right: 30, bottom: 40, left: 90},
-    width = 460 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    width = 300 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
 // Append the svg object to the body of the page
-var svg = d3.select("#legend")
+var svgLegend = d3.select("#legend")
   .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -28,7 +28,7 @@ var data = JSON.parse(legendData)
 
 // Add square 
 var size = 20
-var square = svg.selectAll("mySquares")
+var square = svgLegend.selectAll("mySquares")
     .data(data['legend_key']) // 'legend_key' JSON data object
     .enter()
     .append("rect")
@@ -43,7 +43,7 @@ var square = svg.selectAll("mySquares")
 
 
 // Add text
-var legendText = svg.selectAll("mylabels")
+var legendText = svgLegend.selectAll("mylabels")
     .data(data['legend_key']) // 'legend_key' JSON data object
     .enter()
     .append("text")
@@ -88,18 +88,22 @@ function mouseLeave() {
 }
 
 // Filter data on legend
-svg
+svgLegend
   .select(".export")
   .on("mouseover", mouseOver)
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
     exportChart()
-  });
+    exportMap()
+  })
+  ;
 
-svg
+svgLegend
   .select(".production")
   .on("mouseover", mouseOver)
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
     productionChart()
-  });
+    productionMap()
+  })
+  ;
