@@ -14,8 +14,6 @@ var svg = d3.select("#horizontal_bar")
 
 // Load data from API route
 data = d3.json("/api/v1.0/export_countries").then(function(data){
-    console.log("initial data")
-    console.log(data) // display data
     // Create array for input years
     selectionYear = []
     
@@ -177,7 +175,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 // Define function that generates "production" bar chart
 function productionChart() {
     data = d3.json("/api/v1.0/export_countries").then(function(data) {
-    
+        
         // Create array for input years
         selectionYear = []
         
@@ -338,7 +336,6 @@ function productionChart() {
     
             // // Run the update function with selected value
             update(inputYear)
-            console.log(inputYear)
         });
     
     });

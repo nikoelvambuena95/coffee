@@ -94,7 +94,7 @@ svgLegend
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
     exportChart()
-    exportMap()
+    // exportMap()
   })
   ;
 
@@ -104,6 +104,6 @@ svgLegend
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
     productionChart()
-    productionMap()
+    // productionMap()
   })
   ;
