@@ -15,6 +15,8 @@ var svg = d3.select("#horizontal_bar")
 
 // Load data from API route
 data = d3.json("/api/v1.0/export_countries").then(function(data){
+
+    // console.log(data)
     // Create array for input years
     selectionYear = []
     
@@ -94,12 +96,47 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
             .attr("fill", "#4490bd")
     
     d3.select("#data_year").on("change", function(d){
-        console.log("run updateProductionBar")
+       
         // Recover the chosen value
         var inputYear = d3.select(this).property("value")
         // Run the update function with selected value
         updateProductionBar(inputYear)
+        updateProductionMap(inputYear)
     });
+
+
+    //// Function creating Multi-Line Chart ////
+    
+    var chartData = d3.map();
+
+    for (var i=0;i<selectionYear.length;i++) {
+        var filterYear = selectionYear[i]
+        
+        const updateData = data.filter(function(d) {
+            return d.year == filterYear 
+        });
+
+        // console.log(updateData)
+
+        productionArray = []
+        exportArray = []
+
+        updateData.map(function(d){ 
+            var countryProduction = d.production
+            var countryExport = d.export_1k
+            productionArray.push(countryProduction)
+            exportArray.push(countryExport)
+        })
+
+       var keyYear = Math.round(filterYear)
+
+        var totalProduction = Math.round(d3.sum(productionArray))
+        var totalExport = Math.round(d3.sum(exportArray))
+
+        chartData.set(keyYear, {"totalProduction" : totalProduction, "totalExport" : totalExport})  
+    }
+
+    console.log(chartData)
     
 })
 ;
@@ -208,7 +245,7 @@ function productionChart() {
                 .attr("fill", "#4490bd");
             
         d3.select("#data_year").on("change", function(d){
-            console.log("run updateProductionBar")
+          
             // Recover the chosen value
             var inputYear = d3.select(this).property("value")
             // Run the update function with selected value
@@ -326,11 +363,12 @@ function exportChart() {
                 .attr("fill", "#d42e04")
             
         d3.select("#data_year").on("change", function(d){
-            console.log("run updateExportBar")
+            
             // Recover the chosen value
             var inputYear = d3.select(this).property("value")
             // Run the update function with selected value
             updateExportBar(inputYear)
+            updateExportMap(inputYear)
         });
 
     });
@@ -350,7 +388,7 @@ function updateProductionBar(inputYear) {
 
         // Create new data with the selected year
         var dataFilter = data.filter(function(d){return d.year==inputYear})
-        console.log(dataFilter)
+        
         // Sort filtered data
         dataFilter.sort(function (a, b){
             return d3.descending(a.production, b.production)
@@ -411,7 +449,7 @@ function updateExportBar(inputYear) {
 
         // Create new data with the selected year
         var dataFilter = data.filter(function(d){return d.year==inputYear})
-        console.log(dataFilter)
+       
         // Sort filtered data
         dataFilter.sort(function (a, b){
             return d3.descending(a.export_1k, b.export_1k)

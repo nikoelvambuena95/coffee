@@ -51,8 +51,8 @@ app = Flask(__name__)
 # Create routes
 @app.route("/")
 def index():
-    print("Server access: Home page")
-    return render_template("index.html")
+    print("Server access: production page")
+    return render_template("production.html")
 
 @app.route("/routes")
 def routes(): 

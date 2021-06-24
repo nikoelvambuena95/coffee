@@ -40,7 +40,7 @@ function choropleth(data) {
 
     // Create map data
     var productionData = data[1]
-    // console.log(productionData)
+    
     var selectYear = 1990
 
     var new_data = productionData.filter(function(d) {
@@ -88,10 +88,10 @@ function productionChoro() {
     Promise.all(promises).then(choropleth)
 
     function choropleth(data) {
-        console.log(data)
+        
         // Create map data
         var productionData = data[1]
-        // console.log(productionData)
+        
         var selectYear = 2015
 
         var new_data = productionData.filter(function(d) {
@@ -147,7 +147,7 @@ function exportChoro() {
 
         // Create map data
         var exportData = data[1]
-        // console.log(productionData)
+        
         var selectYear = 2015
 
         var new_data = exportData.filter(function(d) {
@@ -203,7 +203,7 @@ function updateProductionMap(inputYear) {
 
         // Create map data
         var productionData = data[1]
-        console.log(productionData)
+        
         // Create new data with the selected year
 
         var new_data = productionData.filter(function(d) {
@@ -238,3 +238,56 @@ function updateProductionMap(inputYear) {
 
 };
 
+
+
+function updateExportMap(inputYear) {
+
+    var color = d3.scaleThreshold()
+    .domain([500, 1000, 5000, 15000, 30000, 70000])
+    .range(d3.schemeReds[7])
+
+    var promises = [
+        d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson"),
+        d3.json("/api/v1.0/export_countries") 
+    ]
+ 
+    Promise.all(promises).then(choropleth)
+
+    function choropleth(data) {
+
+        // Create map data
+        var exportData = data[1]
+        
+        // Create new data with the selected year
+
+        var new_data = exportData.filter(function(d) {
+            return d.year == inputYear
+        });
+
+        for (var i=0;i<new_data.length;i++) {
+            mapData.set(new_data[i].country, new_data[i].export_1k)
+        };
+
+        // Draw each country
+        svgMap
+            .select(".worldMap").remove();
+
+        svgMap
+            .append("g")
+            .attr("id", "worldMap")
+            .selectAll("path")
+            .data(data[0].features)
+            .enter()
+            .append("path")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .attr("fill", function (d) {
+                    d.total = mapData.get(d.properties.name) || 0;
+                    return color(d.total);
+                })
+                .style("stroke", "#fff")
+      
+    };
+
+};
