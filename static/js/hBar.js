@@ -106,38 +106,92 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 
 
     //// Function creating Multi-Line Chart ////
-    
-    var chartData = d3.map();
+    function multiLineChart() {
+        var margin = {top: 100, right: 30, bottom: 40, left: 90},
+            width = 1000 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
 
-    for (var i=0;i<selectionYear.length;i++) {
-        var filterYear = selectionYear[i]
+        // Append the svg object to the body of the page
+        var svg = d3.select("#lineChart")
+        .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Prepare line chart data
+        var chartData = []
+
+        for (var i=0;i<selectionYear.length;i++) {
+            var filterYear = selectionYear[i]
         
-        const updateData = data.filter(function(d) {
-            return d.year == filterYear 
-        });
+            const updateData = data.filter(function(d) {
+                return d.year == filterYear 
+            });
 
-        // console.log(updateData)
+            productionArray = []
+            exportArray = []
 
-        productionArray = []
-        exportArray = []
+            updateData.map(function(d){ 
+                var countryProduction = d.production
+                var countryExport = d.export_1k
+                productionArray.push(countryProduction)
+                exportArray.push(countryExport)
+            })
 
-        updateData.map(function(d){ 
-            var countryProduction = d.production
-            var countryExport = d.export_1k
-            productionArray.push(countryProduction)
-            exportArray.push(countryExport)
-        })
+            var totalProduction = Math.round(d3.sum(productionArray))
+            var totalExport = Math.round(d3.sum(exportArray))
 
-       var keyYear = Math.round(filterYear)
+            chartData.push({
+                year: filterYear,
+                production: totalProduction,
+                export: totalExport
+            })
+        }
+        console.log(chartData)
 
-        var totalProduction = Math.round(d3.sum(productionArray))
-        var totalExport = Math.round(d3.sum(exportArray))
+        // Add X-axis
+        var x = d3.scaleLinear()
+            .domain([d3.min(chartData, function(d) {return d.year; }),
+                 d3.max(chartData, function(d) { return d.year; })])
+            .range([ 0, width ]);
+        svg.append("g")
+            .attr("class", "xAxis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
 
-        chartData.set(keyYear, {"totalProduction" : totalProduction, "totalExport" : totalExport})  
-    }
+        // Add Y-axis
+        var y = d3.scaleLinear()
+            .domain([50000, d3.max(chartData, function(d) { return d.production; })])
+            .range([ height, 0 ]);
+        svg.append("g")
+            .attr("class", "yAxis")
+            .call(d3.axisLeft(y));
 
-    console.log(chartData)
-    
+        // Add the line
+        svg.append("path")
+            .datum(chartData)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(function(d) { return x(d.year) })
+                .y(function(d) { return y(d.production) })
+                // .curve(d3.curveMonotoneX)
+            )
+        // Create a rect on top of the svg area: this rectangle recovers mouse position
+        svg
+        .append('rect')
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .attr('width', width)
+        .attr('height', height)
+        .on('mouseover', mouseover)
+        .on('mousemove', mousemove)
+        .on('mouseout', mouseout);
+    };
+    multiLineChart()
 })
 ;
 
