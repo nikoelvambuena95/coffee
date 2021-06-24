@@ -151,6 +151,27 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         }
         console.log(chartData)
 
+        // This allows to find the closest X index of the mouse:
+        var bisect = d3.bisector(function(d) { return d.year; }).left;
+
+        // Create the circle that travels along the curve of chart
+        var focus = svg
+        .append('g')
+        .append('circle')
+            .style("fill", "red")
+            .attr("stroke", "black")
+            .attr("stroke-width", "5px")
+            .attr('r', 8.5)
+            .style("opacity", 0);
+
+        // Create the text that travels along the curve of chart
+        var focusText = svg
+        .append('g')
+        .append('text')
+            .style("opacity", 0)
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle")
+
         // Add X-axis
         var x = d3.scaleLinear()
             .domain([d3.min(chartData, function(d) {return d.year; }),
@@ -168,28 +189,38 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         svg.append("g")
             .attr("class", "yAxis")
             .call(d3.axisLeft(y));
+        
+        var productionLine = d3.line()
+                .x(function(d) { return x(d.year) })
+                .y(function(d) { return y(d.production) })
+                .curve(d3.curveMonotoneX)
 
-        // Add the line
-        svg.append("path")
+        var exportLine  = d3.line()
+                .x(function(d) { return x(d.year) })
+                .y(function(d) { return y(d.export) })
+                .curve(d3.curveMonotoneX)
+
+        // Add the production line
+        svg
+            .append("path")
             .datum(chartData)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
-            .attr("d", d3.line()
-                .x(function(d) { return x(d.year) })
-                .y(function(d) { return y(d.production) })
-                // .curve(d3.curveMonotoneX)
-            )
-        // Create a rect on top of the svg area: this rectangle recovers mouse position
+            .attr("d", productionLine)
+            .attr("class", "line")
+        
+        // Add the production line
         svg
-        .append('rect')
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .attr('width', width)
-        .attr('height', height)
-        .on('mouseover', mouseover)
-        .on('mousemove', mousemove)
-        .on('mouseout', mouseout);
+            .append("path")
+            .datum(chartData)
+            .attr("fill", "none")
+            .attr("stroke", "red")
+            .attr("stroke-width", 1.5)
+            .attr("d", exportLine)
+            .attr("class", "line")
+           
+
     };
     multiLineChart()
 })
