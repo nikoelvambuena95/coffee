@@ -17,7 +17,7 @@ var svgLegend = d3.select("#legend")
 // Create a dictionary of keys
 const keys = {
     "legend_key": [
-        {"dataType" : "production", "color" : "#31cc9b"},
+        {"dataType" : "production", "color" : "#4490bd"},
         {"dataType" : "export", "color" : "#d42e04"}
     ]
 };
@@ -94,7 +94,7 @@ svgLegend
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
     exportChart()
-    // exportMap()
+    exportChoro()
   })
   ;
 
@@ -104,6 +104,6 @@ svgLegend
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
     productionChart()
-    // productionMap()
+    productionChoro()
   })
   ;

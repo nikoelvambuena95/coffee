@@ -1,3 +1,4 @@
+
 // Set the dimensions and margins of the graph
 var margin = {top: 100, right: 30, bottom: 40, left: 90},
     width = 1500 - margin.left - margin.right,
@@ -28,43 +29,32 @@ var color = d3.scaleThreshold()
 .domain([500, 1000, 5000, 15000, 30000, 70000])
 .range(d3.schemeBlues[7])
 
-
-d3.json("/api/v1.0/export_countries").then(function(data){
-    // Test inputYear
-    var inputYear = 2000
-    
-    const new_data = data.filter(function(d) {
-        return d.year == inputYear
-    });
-
-    data
-        .forEach(function (d){
-            d.production = +d.production
-        });
-
-    for (var i=0;i<new_data.length;i++) {
-        mapData.set(new_data[i].country, new_data[i].production)
-    };
-})
-
-// d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson").then(function(data){
-//     console.log(data.features)
-// })
-
-
 var promises = [
     d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson"),
     d3.json("/api/v1.0/export_countries") 
 ]
 
-
 Promise.all(promises).then(choropleth)
 
 function choropleth(data) {
+
+    // Create map data
     var productionData = data[1]
-    console.log(data[0].features)
+    // console.log(productionData)
+    var selectYear = 1990
+
+    var new_data = productionData.filter(function(d) {
+        return d.year == selectYear
+    });
+
+    for (var i=0;i<new_data.length;i++) {
+        mapData.set(new_data[i].country, new_data[i].production)
+    };
+
     // Draw each country
-    svgMap.append("g")
+    svgMap
+        .append("g")
+        .attr("id", "worldMap")
         .selectAll("path")
         .data(data[0].features)
         .enter()
@@ -75,72 +65,176 @@ function choropleth(data) {
             .attr("fill", function (d) {
                 d.total = mapData.get(d.properties.name) || 0;
                 return color(d.total);
-              })
-            // .attr("fill", "black")
+            })
             .style("stroke", "#fff")
+
+    
 };
 
 
-// // Load external data 
-// data = d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson").then(function(data){
-// // Draw the map
-//     svgMap.append("g")
-//         .selectAll("path")
-//         .data(data.features)
-//         .enter().append("path")
-//             .attr("fill", "#31cc9b")
-//             .attr("d", d3.geoPath()
-//                 .projection(projection)
-//             )
-//             .style("stroke", "#fff")
-// })
-// ;
+
+
+function productionChoro() {
+
+    var color = d3.scaleThreshold()
+    .domain([500, 1000, 5000, 15000, 30000, 70000])
+    .range(d3.schemeBlues[7])
+
+    var promises = [
+        d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson"),
+        d3.json("/api/v1.0/export_countries") 
+    ]
+
+    Promise.all(promises).then(choropleth)
+
+    function choropleth(data) {
+        console.log(data)
+        // Create map data
+        var productionData = data[1]
+        // console.log(productionData)
+        var selectYear = 2015
+
+        var new_data = productionData.filter(function(d) {
+            return d.year == selectYear
+        });
+
+        for (var i=0;i<new_data.length;i++) {
+            mapData.set(new_data[i].country, new_data[i].production)
+        };
+
+        // Draw each country
+        svgMap
+            .select(".worldMap").remove();
+        svgMap
+            .append("g")
+            .attr("id", "worldMap")
+            .selectAll("path")
+            .data(data[0].features)
+            .enter()
+            .append("path")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .attr("fill", function (d) {
+                    d.total = mapData.get(d.properties.name) || 0;
+                    return color(d.total);
+                })
+                .style("stroke", "#fff")
+    
+      
+    };
+
+};
 
 
 
 
 
+function exportChoro() {
+
+    var color = d3.scaleThreshold()
+    .domain([500, 1000, 5000, 15000, 30000, 70000])
+    .range(d3.schemeReds[7])
+
+    var promises = [
+        d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson"),
+        d3.json("/api/v1.0/export_countries") 
+    ]
+
+    Promise.all(promises).then(choropleth)
+
+    function choropleth(data) {
+
+        // Create map data
+        var exportData = data[1]
+        // console.log(productionData)
+        var selectYear = 2015
+
+        var new_data = exportData.filter(function(d) {
+            return d.year == selectYear
+        });
+
+        for (var i=0;i<new_data.length;i++) {
+            mapData.set(new_data[i].country, new_data[i].export_1k)
+        };
+
+        // Draw each country
+        svgMap
+            .select(".worldMap").remove();
+        svgMap
+            .append("g")
+            .attr("id", "worldMap")
+            .selectAll("path")
+            .data(data[0].features)
+            .enter()
+            .append("path")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .attr("fill", function (d) {
+                    d.total = mapData.get(d.properties.name) || 0;
+                    return color(d.total);
+                })
+                .style("stroke", "#fff")
+    
+      
+    };
+
+};
 
 
 
-// function productionMap() {
-//     // Load external data 
-//     data = d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson").then(function(data){
-//     // Draw the map
-//         svgMap.append("g")
-//             .selectAll("path")
-//             .data(data.features)
-//             .enter()
-//                 .append("path")
-//                     .attr("fill", "#31cc9b")
-//                     .attr("d", d3.geoPath()
-//                         .projection(projection)
-//                     )
-//                     .style("stroke", "#fff")
-//     });
-// }
-// ;
+//// Create functions for filtering map data by year ////
 
+function updateProductionMap(inputYear) {
 
+    var color = d3.scaleThreshold()
+    .domain([500, 1000, 5000, 15000, 30000, 70000])
+    .range(d3.schemeBlues[7])
 
+    var promises = [
+        d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson"),
+        d3.json("/api/v1.0/export_countries") 
+    ]
+ 
+    Promise.all(promises).then(choropleth)
 
+    function choropleth(data) {
 
+        // Create map data
+        var productionData = data[1]
+        console.log(productionData)
+        // Create new data with the selected year
 
+        var new_data = productionData.filter(function(d) {
+            return d.year == inputYear
+        });
 
-// function exportMap() {
-//     // Load external data 
-//     data = d3.json("http://enjalot.github.io/wwsd/data/world/world-110m.geojson").then(function(data){
-//     // Draw the map
-//         svgMap.append("g")
-//             .selectAll("path")
-//             .data(data.features)
-//             .enter().append("path")
-//                 .attr("fill", "#d42e04")
-//                 .attr("d", d3.geoPath()
-//                     .projection(projection)
-//                 )
-//                 .style("stroke", "#fff")
-//     })
-//     ;
-// }
+        for (var i=0;i<new_data.length;i++) {
+            mapData.set(new_data[i].country, new_data[i].production)
+        };
+
+        // Draw each country
+        svgMap
+            .select(".worldMap").remove();
+
+        svgMap
+            .append("g")
+            .attr("id", "worldMap")
+            .selectAll("path")
+            .data(data[0].features)
+            .enter()
+            .append("path")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .attr("fill", function (d) {
+                    d.total = mapData.get(d.properties.name) || 0;
+                    return color(d.total);
+                })
+                .style("stroke", "#fff")
+      
+    };
+
+};
 

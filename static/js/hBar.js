@@ -9,6 +9,7 @@ var svg = d3.select("#horizontal_bar")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
+    .attr("id", "chartG")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
@@ -85,86 +86,23 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         .data(new_data)
         .enter()
         .append("rect")
+            .attr("class", "productionData")
             .attr("x", x(0) )
             .attr("y", function(d) { return y(d.country); })
             .attr("width", function(d) { return x(d.production); })
             .attr("height", y.bandwidth() )
-            .attr("fill", "#31cc9b")
-
-    // Create function to update chart
-    function update(inputYear) {
-
-        // Create new data with the selected year
-        var dataFilter = data.filter(function(d){return d.year==inputYear})
-
-        // Sort filtered data
-        dataFilter.sort(function (a, b){
-        return d3.descending(a.production, b.production)
-        });
-
-        // Update X-axis
-        var xMax = dataFilter[0]['production']
-
-        var x = d3.scaleLinear()
-        .domain([0, xMax])
-        .range([ 0, width]);
-        
-        svg
-            .select(".xAxis").remove();
-        svg
-            .append("g")
-                .transition()
-                .duration(1700)
-                .attr("class", "xAxis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x))
-                .selectAll("text")
-                .attr("transform", "translate(-10,0)rotate(-45)")
-                .style("text-anchor", "end"); 
-
-
-        // Update Y-axis
-        var y = d3.scaleBand()
-        .range([ 0, height ])
-        .domain(dataFilter.map(function(d) { return d.country; }))
-        .padding(.3);
-
-        svg
-            .select(".yAxis").remove();
-        svg
-            .append("g")
-                .transition()
-                .duration(1700)
-                .attr("class", "yAxis")
-                .call(d3.axisLeft(y))
-
-        // Update bars with filtered data
-        bars.data(dataFilter)
-            .transition()
-            .duration(1000)
-            .attr("y", function(d) { return y(d.country); })
-            .attr("width", function(d) { return x(d.production); });
-      };
-
-    // When the button is changed, run the update function
-    d3.select("#data_year").on("change", function(d) {
-
+            .attr("fill", "#4490bd")
+    
+    d3.select("#data_year").on("change", function(d){
+        console.log("run updateProductionBar")
         // Recover the chosen value
         var inputYear = d3.select(this).property("value")
-
         // Run the update function with selected value
-        update(inputYear)
+        updateProductionBar(inputYear)
     });
-
+    
 })
 ;
-
-
-
-
-
-
-
 
 
 
@@ -262,82 +200,21 @@ function productionChart() {
             .append("rect")
                 .transition()
                 .duration(1700)
+                .attr("class", "productionData")
                 .attr("x", x(0) )
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.production); })
                 .attr("height", y.bandwidth() )
-                .attr("fill", "#31cc9b");
-    
-        // Create function to update chart
-        function update(inputYear) {
-    
-            // Create new data with the selected year
-            var dataFilter = data.filter(function(d){return d.year==inputYear});
-    
-            // Sort filtered data
-            dataFilter.sort(function (a, b){
-            return d3.descending(a.production, b.production)
-            });
-    
-            // Update X-axis
-            var xMax = dataFilter[0]['production']
-    
-            var x = d3.scaleLinear()
-            .domain([0, xMax])
-            .range([ 0, width]);
+                .attr("fill", "#4490bd");
             
-            svg
-                .select(".xAxis").remove();
-            svg
-                .append("g")
-                    .transition()
-                    .duration(1700)
-                    .attr("class", "xAxis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x))
-                    .selectAll("text")
-                    .attr("transform", "translate(-10,0)rotate(-45)")
-                    .style("text-anchor", "end"); 
-    
-    
-            // Update Y-axis
-            var y = d3.scaleBand()
-            .range([ 0, height ])
-            .domain(dataFilter.map(function(d) { return d.country; }))
-            .padding(.3);
-    
-            svg
-                .select(".yAxis").remove();
-            
-            svg
-                .append("g")
-                    .transition()
-                    .duration(1700)
-                    .attr("class", "yAxis")
-                    .call(d3.axisLeft(y));
-
-            // Update bars with filtered data
-            // When using the "bars" variable method similar to initial load, errors occurred //
-            svg
-                .selectAll("rect")
-                .data(dataFilter)
-                    .transition()
-                    .duration(1000)
-                    .attr("y", function(d) { return y(d.country); })
-                    .attr("width", function(d) { return x(d.production); });
-
-          };
-    
-        // When the button is changed, run the update function
-        d3.select("#data_year").on("change", function(d) {
-    
+        d3.select("#data_year").on("change", function(d){
+            console.log("run updateProductionBar")
             // Recover the chosen value
             var inputYear = d3.select(this).property("value")
-    
-            // // Run the update function with selected value
-            update(inputYear)
+            // Run the update function with selected value
+            updateProductionBar(inputYear)
+            updateProductionMap(inputYear)
         });
-    
     });
 
 }
@@ -441,82 +318,150 @@ function exportChart() {
             .append("rect")
                 .transition()
                 .duration(1700)
+                .attr("class", "exportData")
                 .attr("x", x(0) )
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.export_1k); })
                 .attr("height", y.bandwidth() )
                 .attr("fill", "#d42e04")
-    
-        // Create function to update chart
-        function update(inputYear) {
-    
-            // Create new data with the selected year
-            var dataFilter = data.filter(function(d){return d.year==inputYear})
-    
-            // Sort filtered data
-            dataFilter.sort(function (a, b){
-            return d3.descending(a.export_1k, b.export_1k)
-            });
-    
-            // Update X-axis
-            var xMax = dataFilter[0]['export_1k']
-    
-            var x = d3.scaleLinear()
-            .domain([0, xMax])
-            .range([ 0, width]);
             
-            svg
-                .select(".xAxis").remove();
-            svg
-                .append("g")
-                    .transition()
-                    .duration(1700)
-                    .attr("class", "xAxis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x))
-                    .selectAll("text")
-                    .attr("transform", "translate(-10,0)rotate(-45)")
-                    .style("text-anchor", "end"); 
-    
-    
-            // Update Y-axis
-            var y = d3.scaleBand()
-            .range([ 0, height ])
-            .domain(dataFilter.map(function(d) { return d.country; }))
-            .padding(.3);
-    
-            svg
-                .select(".yAxis").remove();
-            svg
-                .append("g")
-                    .transition()
-                    .duration(1700)
-                    .attr("class", "yAxis")
-                    .call(d3.axisLeft(y))
-    
-            // Update bars with filtered data
-            // When using the "bars" variable method similar to initial load, errors occurred //
-            svg
-                .selectAll("rect")
-                .data(dataFilter)
-                    .transition()
-                    .duration(1000)
-                    .attr("y", function(d) { return y(d.country); })
-                    .attr("width", function(d) { return x(d.export_1k); });
-
-          };
-    
-        // When the button is changed, run the update function
-        d3.select("#data_year").on("change", function(d) {
-    
+        d3.select("#data_year").on("change", function(d){
+            console.log("run updateExportBar")
             // Recover the chosen value
             var inputYear = d3.select(this).property("value")
-    
             // Run the update function with selected value
-            update(inputYear)
+            updateExportBar(inputYear)
         });
-    
+
     });
+};
+
+
+
+
+
+
+
+
+//// Create functions to filter bar graph data by year ////
+
+function updateProductionBar(inputYear) {
+    data = d3.json("/api/v1.0/export_countries").then(function(data){ 
+
+        // Create new data with the selected year
+        var dataFilter = data.filter(function(d){return d.year==inputYear})
+        console.log(dataFilter)
+        // Sort filtered data
+        dataFilter.sort(function (a, b){
+            return d3.descending(a.production, b.production)
+            });
+        
+        // Update X-axis
+        var xMax = dataFilter[0]['production']
     
+        var x = d3.scaleLinear()
+        .domain([0, xMax])
+        .range([ 0, width]);
+        
+        svg
+            .select(".xAxis").remove();
+        svg
+            .append("g")
+                .transition()
+                .duration(1700)
+                .attr("class", "xAxis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end"); 
+
+
+        // Update Y-axis
+        var y = d3.scaleBand()
+        .range([ 0, height ])
+        .domain(dataFilter.map(function(d) { return d.country; }))
+        .padding(.3);
+
+        svg
+            .select(".yAxis").remove();
+        svg
+            .append("g")
+                .transition()
+                .duration(1700)
+                .attr("class", "yAxis")
+                .call(d3.axisLeft(y))
+
+        // Update bars with filtered data
+        // When using the "bars" variable method similar to initial load, errors occurred //
+        svg
+            .selectAll("rect")
+            .data(dataFilter)
+                .transition()
+                .duration(1000)
+                .attr("y", function(d) { return y(d.country); })
+                .attr("width", function(d) { return x(d.production); })
+                .attr("fill", "#4490bd");
+    })
 }
-;
+
+
+function updateExportBar(inputYear) {
+    data = d3.json("/api/v1.0/export_countries").then(function(data){ 
+
+        // Create new data with the selected year
+        var dataFilter = data.filter(function(d){return d.year==inputYear})
+        console.log(dataFilter)
+        // Sort filtered data
+        dataFilter.sort(function (a, b){
+            return d3.descending(a.export_1k, b.export_1k)
+            });
+        
+        // Update X-axis
+        var xMax = dataFilter[0]['export_1k']
+    
+        var x = d3.scaleLinear()
+        .domain([0, xMax])
+        .range([ 0, width]);
+        
+        svg
+            .select(".xAxis").remove();
+        svg
+            .append("g")
+                .transition()
+                .duration(1700)
+                .attr("class", "xAxis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end"); 
+
+
+        // Update Y-axis
+        var y = d3.scaleBand()
+        .range([ 0, height ])
+        .domain(dataFilter.map(function(d) { return d.country; }))
+        .padding(.3);
+
+        svg
+            .select(".yAxis").remove();
+        svg
+            .append("g")
+                .transition()
+                .duration(1700)
+                .attr("class", "yAxis")
+                .call(d3.axisLeft(y))
+
+        // Update bars with filtered data
+        // When using the "bars" variable method similar to initial load, errors occurred //
+        svg
+            .selectAll("rect")
+            .data(dataFilter)
+                .transition()
+                .duration(1000)
+                .attr("y", function(d) { return y(d.country); })
+                .attr("width", function(d) { return x(d.export_1k); })
+                .attr("fill", "#d42e04");
+    })
+}
