@@ -18,17 +18,19 @@ crossorigin="" />
 
 
 <body>
-    <!-- Initialize a button for data type presented in horizontal bar chart -->
-    <select id="data_year"></select>
-
-    <!-- Initialize a DIV legend -->
-    <div id="legend"></div>
-
-    <!-- Initialize a DIV for the horizontal bar chart -->
-    <div id="horizontal_bar"></div>
-
     <!-- Initialize an SVG for the world map-->
-    <div id="worldMap"></div>
+    <div id="worldMap">
+        <!-- Initialize a DIV for the horizontal bar chart -->
+        <div id="horizontal_bar"></div>
+        <div id="filter">
+            <!-- Initialize a button for data type presented in horizontal bar chart -->
+            <select id="data_year"></select>
+
+            <!-- Initialize a DIV legend -->
+            <div id="legend"></div>
+        </div>
+    </div>
+
 
     <!-- Initialize an SVG for the line chart -->
     <div id="lineChart"></div>
@@ -56,8 +58,6 @@ crossorigin="" />
     <!-- d3 Scale-Chromatic -->
     <script src="https://d3js.org/d3-scale-chromatic.v3.min.js"></script>
     
-    <!-- LineChart JS -->
-    <script type="text/javascript" src="../static/js/linechart.js"></script>
     <!-- Map JS -->
     <script type="text/javascript" src="../static/js/choroplethMap.js"></script>
     <!-- Legend JS -->

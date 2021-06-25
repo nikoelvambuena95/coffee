@@ -2,23 +2,30 @@
 
 // Set the dimensions and margins of the graph
 var margin = {top: 60, right: 30, bottom: 40, left: 90},
-    width = 300 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    width = 300
+    //  - margin.left - margin.right,
+    height = 150
+    //  - margin.top - margin.bottom
+     ;
 
 // Append the svg object to the body of the page
 var svgLegend = d3.select("#legend")
   .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width
+    // + margin.left + margin.right
+     )
+    .attr("height", height
+    // + margin.top + margin.bottom
+    )
   .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+    // .attr("transform",
+    //       "translate(" + margin.left + "," + margin.top + ")");
 
 // Create a dictionary of keys
 const keys = {
     "legend_key": [
-        {"dataType" : "production", "color" : "#4490bd"},
-        {"dataType" : "export", "color" : "#d42e04"}
+        {"dataType" : "PRODUCTION", "color" : "#4490bd"},
+        {"dataType" : "EXPORT", "color" : "#d42e04"}
     ]
 };
 
@@ -89,7 +96,7 @@ function mouseLeave() {
 
 // Filter data on legend
 svgLegend
-  .select(".export")
+  .select(".EXPORT")
   .on("mouseover", mouseOver)
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
@@ -99,7 +106,7 @@ svgLegend
   ;
 
 svgLegend
-  .select(".production")
+  .select(".PRODUCTION")
   .on("mouseover", mouseOver)
   .on("mouseleave", mouseLeave)
   .on("click", function(d){

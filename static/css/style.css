@@ -5,6 +5,24 @@
 
 div {
   display: inline-block;
+  border: solid black .5px;
+}
+
+#worldMap {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#horizontal_bar {
+  position: absolute; 
+  right: 0px;
+}
+
+#filter {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
 }
 
 body {

@@ -149,7 +149,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
                 export: totalExport
             })
         }
-        console.log(chartData)
+        // console.log(chartData)
 
         // Add X-axis
         var x = d3.scaleLinear()

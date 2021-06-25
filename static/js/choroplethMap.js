@@ -7,14 +7,18 @@ var margin = {top: 100, right: 30, bottom: 40, left: 90},
 // The svg
 var svgMap = d3.select("#worldMap")
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width
+    //  + margin.left + margin.right
+     )
+    .attr("height", height 
+    // + margin.top + margin.bottom
+    )
 ;
 
 // Path and projection
 var path = d3.geoPath();
 var projection = d3.geoNaturalEarth1()
-  .scale(250)
+  .scale(220)
   .center([0,20])
 ;
 
@@ -54,7 +58,7 @@ function choropleth(data) {
     // Draw each country
     svgMap
         .append("g")
-        .attr("id", "worldMap")
+        .attr("id", "worldChart")
         .selectAll("path")
         .data(data[0].features)
         .enter()
@@ -104,10 +108,10 @@ function productionChoro() {
 
         // Draw each country
         svgMap
-            .select(".worldMap").remove();
+            .select(".worldChart").remove();
         svgMap
             .append("g")
-            .attr("id", "worldMap")
+            .attr("id", "worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
@@ -160,10 +164,10 @@ function exportChoro() {
 
         // Draw each country
         svgMap
-            .select(".worldMap").remove();
+            .select(".worldChart").remove();
         svgMap
             .append("g")
-            .attr("id", "worldMap")
+            .attr("id", "worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
@@ -216,11 +220,11 @@ function updateProductionMap(inputYear) {
 
         // Draw each country
         svgMap
-            .select(".worldMap").remove();
+            .select(".worldChart").remove();
 
         svgMap
             .append("g")
-            .attr("id", "worldMap")
+            .attr("id", "worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
@@ -270,11 +274,11 @@ function updateExportMap(inputYear) {
 
         // Draw each country
         svgMap
-            .select(".worldMap").remove();
+            .select(".worldChart").remove();
 
         svgMap
             .append("g")
-            .attr("id", "worldMap")
+            .attr("id", "worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
