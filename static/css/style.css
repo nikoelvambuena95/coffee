@@ -5,10 +5,26 @@
 
 div {
   display: inline-block;
-  border: solid black .5px;
+  /* border: solid black .5px; */
+}
+
+#analysis {
+  position: relative;
+  width: 1470px;
+}
+
+#textAnalysis {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  width: 400px;
+  height: 400px;
+  /* background-color: indianred; */
+
 }
 
 #worldMap {
+  position: relative;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -20,9 +36,9 @@ div {
 }
 
 #filter {
-  position: absolute;
+  position: fixed;
   right: 0px;
-  bottom: 0px;
+  top: 190px;
 }
 
 body {

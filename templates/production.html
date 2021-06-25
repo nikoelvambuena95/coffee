@@ -18,22 +18,28 @@ crossorigin="" />
 
 
 <body>
-    <!-- Initialize an SVG for the world map-->
-    <div id="worldMap">
+    <div id="analysis">
+     <!-- Initialize an SVG for the line chart -->
+        <div id="lineChart"></div>
+
         <!-- Initialize a DIV for the horizontal bar chart -->
         <div id="horizontal_bar"></div>
-        <div id="filter">
-            <!-- Initialize a button for data type presented in horizontal bar chart -->
-            <select id="data_year"></select>
+    </div>
 
-            <!-- Initialize a DIV legend -->
-            <div id="legend"></div>
+    <!-- Initialize an SVG for the world map-->
+    <div id="worldMap">
+        <div id="textAnalysis">
+            <p id="textUpdate">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ut saepe, numquam fuga nulla ipsa eum distinctio enim soluta temporibus porro doloremque dolorum consectetur, nobis dolore minus nesciunt ab. Facilis, atque.</p>
         </div>
     </div>
 
+    <div id="filter">
+        <!-- Initialize a DIV legend -->
+        <div id="legend"></div>
 
-    <!-- Initialize an SVG for the line chart -->
-    <div id="lineChart"></div>
+        <!-- Initialize a button for data type presented in horizontal bar chart -->
+        <select id="data_year"></select>
+    </div>
 
 
 
@@ -62,8 +68,8 @@ crossorigin="" />
     <script type="text/javascript" src="../static/js/choroplethMap.js"></script>
     <!-- Legend JS -->
     <script type="text/javascript" src="../static/js/legend.js"></script>
-    <!-- Horizontal Bar Chart JS -->
-    <script type="text/javascript" src="../static/js/hBar.js"></script>
+    <!-- Graphs JS -->
+    <script type="text/javascript" src="../static/js/graphs.js"></script>
 
 </body>
 

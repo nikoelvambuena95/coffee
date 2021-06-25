@@ -4,7 +4,7 @@
 var margin = {top: 60, right: 30, bottom: 40, left: 90},
     width = 300
     //  - margin.left - margin.right,
-    height = 150
+    height = 75
     //  - margin.top - margin.bottom
      ;
 
@@ -40,8 +40,8 @@ var square = svgLegend.selectAll("mySquares")
     .enter()
     .append("rect")
       .attr("class", function(d){ return d.dataType})
-      .attr("x", 100)
-      .attr("y", function(d, i){ return 100 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("x", 10)
+      .attr("y", function(d, i){ return 15 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
       .attr("width", size)
       .attr("height", size)
       .style("fill", function(d){ return d.color})
@@ -55,8 +55,8 @@ var legendText = svgLegend.selectAll("mylabels")
     .enter()
     .append("text")
       .attr("id", function(d){return "text_" + d.dataType})
-      .attr("x", 100 + size*1.2)
-      .attr("y", function(d,i){ return 100 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("x", 10 + size*1.2)
+      .attr("y", function(d,i){ return 15 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
       .style("fill", "#050505")
       .text(function(d){ return d.dataType})
       .attr("text-anchor", "left")

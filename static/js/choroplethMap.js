@@ -70,11 +70,10 @@ function choropleth(data) {
                 d.total = mapData.get(d.properties.name) || 0;
                 return color(d.total);
             })
-            .style("stroke", "#fff")
+            .style("stroke", "#1f1f1f")
 
     
 };
-
 
 
 
@@ -123,7 +122,7 @@ function productionChoro() {
                     d.total = mapData.get(d.properties.name) || 0;
                     return color(d.total);
                 })
-                .style("stroke", "#fff")
+                .style("stroke", "#1f1f1f")
     
       
     };
@@ -162,6 +161,8 @@ function exportChoro() {
             mapData.set(new_data[i].country, new_data[i].export_1k)
         };
 
+        console.log(data[0].features)
+
         // Draw each country
         svgMap
             .select(".worldChart").remove();
@@ -179,7 +180,21 @@ function exportChoro() {
                     d.total = mapData.get(d.properties.name) || 0;
                     return color(d.total);
                 })
-                .style("stroke", "#fff")
+                .style("stroke",
+                //  "#1f1f1f"
+                "blue"
+                 )
+                .on("click", function (d) {
+                    country = d.properties.name
+                    var countryData = new_data.filter(function(d){
+                        return d.country == country
+                    })
+                    var countryExport = countryData[0].export_1k
+                    var countryProduction = countryData[0].production
+                    var countryYear = countryData[0].year
+                    
+                    console.log(countryData[0])
+                })
     
       
     };
@@ -236,7 +251,7 @@ function updateProductionMap(inputYear) {
                     d.total = mapData.get(d.properties.name) || 0;
                     return color(d.total);
                 })
-                .style("stroke", "#fff")
+                .style("stroke", "#1f1f1f")
       
     };
 
@@ -290,7 +305,7 @@ function updateExportMap(inputYear) {
                     d.total = mapData.get(d.properties.name) || 0;
                     return color(d.total);
                 })
-                .style("stroke", "#fff")
+                .style("stroke", "#1f1f1f")
       
     };
 

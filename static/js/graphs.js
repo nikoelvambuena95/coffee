@@ -1,7 +1,7 @@
 // Set the dimensions and margins of the graph
-var margin = {top: 60, right: 30, bottom: 40, left: 90},
-    width = 460 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+var margin = {top: 10, right: 10, bottom: 40, left: 90},
+    width = 470 - margin.left - margin.right,
+    height = 650 - margin.top - margin.bottom;
 
 // Append the svg object to the body of the page
 var svg = d3.select("#horizontal_bar")
@@ -61,7 +61,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
     // Add X-axis
     var x = d3.scaleLinear()
         .domain([0, xMax])
-        .range([ 0, width]);
+        .range([ 0, 300]);
 
     svg
         .append("g")
@@ -160,7 +160,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         svg.append("g")
             .attr("class", "xAxis")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x).tickFormat(d3.format("d")));
 
         // Add Y-axis
         var y = d3.scaleLinear()
@@ -173,12 +173,10 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         var productionLine = d3.line()
                 .x(function(d) { return x(d.year) })
                 .y(function(d) { return y(d.production) })
-                .curve(d3.curveMonotoneX)
 
         var exportLine  = d3.line()
                 .x(function(d) { return x(d.year) })
                 .y(function(d) { return y(d.export) })
-                .curve(d3.curveMonotoneX)
 
         // Add the production line
         svg
