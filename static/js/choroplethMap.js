@@ -71,6 +71,31 @@ function choropleth(data) {
                 return color(d.total);
             })
             .style("stroke", "#1f1f1f")
+            .on("click", function (d) {
+                country = d.properties.name
+
+                var countryData = new_data.filter(function(d){
+                    return d.country == country
+                })
+                var countryExport = countryData[0].export_1k
+                var countryProduction = countryData[0].production
+                var countryYear = countryData[0].year
+                
+                // Create function that generates analysis text for each country
+                function mapAnalysis() {
+                    var updateText = "In " + countryYear +
+                    ", " + country + " produced " + 
+                    (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
+                    (Math.round(countryExport) * 1000) + " lbs. of coffee."
+
+                    var selectText = d3.select("#textUpdate")
+
+                    selectText.text(updateText)
+
+                }
+
+                mapAnalysis()
+            })
 
     
 };
@@ -123,6 +148,31 @@ function productionChoro() {
                     return color(d.total);
                 })
                 .style("stroke", "#1f1f1f")
+                .on("click", function (d) {
+                    country = d.properties.name
+
+                    var countryData = new_data.filter(function(d){
+                        return d.country == country
+                    })
+                    var countryExport = countryData[0].export_1k
+                    var countryProduction = countryData[0].production
+                    var countryYear = countryData[0].year
+                    
+                    // Create function that generates analysis text for each country
+                    function mapAnalysis() {
+                        var updateText = "In " + countryYear +
+                        ", " + country + " produced " + 
+                        (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
+                        (Math.round(countryExport) * 1000) + " lbs. of coffee."
+
+                        var selectText = d3.select("#textUpdate")
+
+                        selectText.text(updateText)
+
+                    }
+
+                    mapAnalysis()
+                })
     
       
     };
@@ -161,8 +211,6 @@ function exportChoro() {
             mapData.set(new_data[i].country, new_data[i].export_1k)
         };
 
-        console.log(data[0].features)
-
         // Draw each country
         svgMap
             .select(".worldChart").remove();
@@ -180,10 +228,7 @@ function exportChoro() {
                     d.total = mapData.get(d.properties.name) || 0;
                     return color(d.total);
                 })
-                .style("stroke",
-                //  "#1f1f1f"
-                "blue"
-                 )
+                .style("stroke", "#1f1f1f")
                 .on("click", function (d) {
                     country = d.properties.name
 
@@ -193,7 +238,7 @@ function exportChoro() {
                     var countryExport = countryData[0].export_1k
                     var countryProduction = countryData[0].production
                     var countryYear = countryData[0].year
-                    
+
                     // Create function that generates analysis text for each country
                     function mapAnalysis() {
                         var updateText = "In " + countryYear +
@@ -265,6 +310,31 @@ function updateProductionMap(inputYear) {
                     return color(d.total);
                 })
                 .style("stroke", "#1f1f1f")
+                .on("click", function (d) {
+                    country = d.properties.name
+    
+                    var countryData = new_data.filter(function(d){
+                        return d.country == country
+                    })
+                    var countryExport = countryData[0].export_1k
+                    var countryProduction = countryData[0].production
+                    var countryYear = countryData[0].year
+                    
+                    // Create function that generates analysis text for each country
+                    function mapAnalysis() {
+                        var updateText = "In " + countryYear +
+                        ", " + country + " produced " + 
+                        (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
+                        (Math.round(countryExport) * 1000) + " lbs. of coffee."
+    
+                        var selectText = d3.select("#textUpdate")
+    
+                        selectText.text(updateText)
+    
+                    }
+    
+                    mapAnalysis()
+                })
       
     };
 
