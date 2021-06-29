@@ -38,7 +38,7 @@ div {
 #filter {
   position: fixed;
   right: 0px;
-  top: 190px;
+  bottom: 110px;
 }
 
 body {

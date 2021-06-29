@@ -295,6 +295,48 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 
 
 
+// Prep indicator price data
+d3.json("api/v1.0/indicator_prices").then(function(data){
+    
+    // Create array for years to caculate average ICO
+    indicator_yearList = []
+
+    for (var i=0;i<data.length;i++) {
+        var year = data[i]['year']
+
+        if (indicator_yearList.includes(year)) {}
+        else {
+            indicator_yearList.push(year)
+        }
+    };
+
+    // Create a function to find average ICO score //
+    var indicator_priceData = []
+
+    for (var i=0;i<indicator_yearList.length;i++) {
+        var filterYear = indicator_yearList[i]
+
+        const indicator_filterData = data.filter(function(d) {
+            return d.year == filterYear 
+        });
+
+        indicator_priceArray = []
+
+        indicator_filterData.map(function(d){
+            var indicator_priceFilter = d.indicator_price
+            indicator_priceArray.push(indicator_priceFilter)
+        })
+        
+        var averageIndicatorPrice = (d3.sum(indicator_priceArray)/12).toFixed(2)
+
+        indicator_priceData.push({
+            year: filterYear,
+            indicator_price: averageIndicatorPrice
+        })
+    }
+    console.log(indicator_priceData)
+})
+
 
 
 
