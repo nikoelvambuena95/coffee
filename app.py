@@ -63,6 +63,7 @@ def routes():
         f"/api/v1.0/export_countries<br>"
         f"/api/v1.0/import_countries<br>"
         f"/api/v1.0/retail_prices<br>"
+        f"/api/v1.0/indicator_prices<br>"
     )
 
 @app.route("/api/v1.0/export_countries")
@@ -141,6 +142,29 @@ def retail():
         retail_price_list.append(retail_price_dict)
     
     return jsonify(retail_price_list)
+    
+
+@app.route("/api/v1.0/indicator_prices")
+def indicator():
+    print("Server access: indicator prices")
+    s = Session(bind=engine)
+
+    sql_query = text("SELECT * FROM Indicator_Prices WHERE indicator == 'ICO Composite'")
+    indicator_price_results = s.execute(sql_query).all()
+
+    indicator_price_list = []
+    for row in indicator_price_results:
+        for i in row:
+            year = row[1]
+            month = row[2]
+            indicator_price = row[3]
+        indicator_price_dict = {}
+        indicator_price_dict['year'] = year
+        indicator_price_dict['month'] = month
+        indicator_price_dict['indicator_price'] = indicator_price
+        indicator_price_list.append(indicator_price_dict)    
+
+    return jsonify(indicator_price_list)
 
 if __name__=="__main__":
     app.run(debug = True)
