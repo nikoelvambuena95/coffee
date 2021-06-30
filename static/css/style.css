@@ -32,13 +32,23 @@ div {
 
 #horizontal_bar {
   position: absolute; 
-  right: 0px;
+  top: 70px;
+  right: -70px;
+}
+
+#bar_legend {
+  position: absolute;
+  right: 10px;
+  top: 250px;
+  width: 300px;
+  height: 100px;
+  z-index: -1;
 }
 
 #filter {
   position: fixed;
-  right: 0px;
-  bottom: 110px;
+  right: 50px;
+  bottom: 50px;
 }
 
 body {

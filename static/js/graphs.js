@@ -1,28 +1,33 @@
 // Set the dimensions and margins of the graph
-var margin = {top: 10, right: 10, bottom: 40, left: 90},
+var margin = {top: 150, right: 10, bottom: 100, left: 90},
     width = 470 - margin.left - margin.right,
     height = 650 - margin.top - margin.bottom;
 
 // Append the svg object to the body of the page
-var svg = d3.select("#horizontal_bar")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("id", "chartG")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+var svg = d3.select("#analysis");
 
 // Load data from API route
-data = d3.json("/api/v1.0/export_countries").then(function(data){
+var promises = [
+    d3.json("/api/v1.0/export_countries"),
+    d3.json("api/v1.0/indicator_prices")
+]
 
-    // console.log(data)
+Promise.all(promises).then(initial_graphs)
+
+function initial_graphs(data) {
+    
+    // Get data from API routes
+    const export_country_dataRaw = data[0]
+    const indicator_price_dataRaw = data[1]
+
+    /// Create horizontal bar graphs ///
+
     // Create array for input years
     selectionYear = []
     
     // Loop through data and append available years to array
-    for (var i=0;i<data.length;i++) {
-        var year = data[i]['year']
+    for (var i=0;i<export_country_dataRaw.length;i++) {
+        var year = export_country_dataRaw[i]['year']
         
         if (selectionYear.includes(year)) {}
         else {
@@ -38,14 +43,15 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         .text(function (d) { return d; })
         .attr("value", function (d) { return d ;})
     
-    // Filter data by year
-    var inputYear = 1990
+     // Filter data by year
+     var inputYear = 1990
 
-    const new_data = data.filter(function(d) {
+     const new_data = export_country_dataRaw.filter(function(d) {
         return d.year == inputYear
-    });
+        });
 
-    data
+    
+    new_data
         .forEach(function (d){
             d.production = +d.production
         });
@@ -56,14 +62,24 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
             return d3.descending(a.production, b.production)
         });
 
-    var xMax = new_data[0]['production']
+    var slice_data = new_data.slice(0, 10)
+
+    var xMax = slice_data[0]['production']
+    
+
+    // Set Horizontal Bar SVG 
+    var svgBar = svg.select("#horizontal_bar")
+        .append("svg")
+        .attr("class", "bar_chart")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
 
     // Add X-axis
     var x = d3.scaleLinear()
         .domain([0, xMax])
-        .range([ 0, 300]);
+        .range([ 0, width]);
 
-    svg
+    svgBar
         .append("g")
             .attr("class", "xAxis")
             .attr("transform", "translate(0," + height + ")")
@@ -71,30 +87,39 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
             .selectAll("text")
             .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end"); 
-    
-    // Add Y-axis
-    var y = d3.scaleBand()
-        .range([ 0, height ])
-        .domain(new_data.map(function(d) { return d.country; }))
-        .padding(.3);
-    
-    svg
+
+     // Add Y-axis
+     var y = d3.scaleBand()
+     .range([ 0, height])
+     .domain(slice_data.map(function(d) { return d.country; }))
+     .padding(.5);
+
+     svgBar
         .append("g")
-            .attr("class", "yAxis")
-            .call(d3.axisLeft(y))
+         .attr("class", "yAxis")
+         .call(d3.axisLeft(y));
     
     // Add Bars
-    var bars = svg.selectAll("myRect")
-        .data(new_data)
+    var bars = svgBar.selectAll("myRect")
+        .data(slice_data)
         .enter()
         .append("rect")
-            .attr("class", "productionData")
+            .attr("class", "data_bars")
             .attr("x", x(0) )
             .attr("y", function(d) { return y(d.country); })
             .attr("width", function(d) { return x(d.production); })
             .attr("height", y.bandwidth() )
             .attr("fill", "#4490bd")
-    
+            .on("mouseover", function(d) {
+                console.log(d.country)
+                var barText = d3.select("#bar_text")
+                barText.text(d.country)
+            })
+            .on("mouseout", function(d) {
+                var barText = d3.select("#bar_text")
+                barText.text("")
+            })
+
     d3.select("#data_year").on("change", function(d){
        
         // Recover the chosen value
@@ -104,238 +129,236 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
         updateProductionMap(inputYear)
     });
 
-
-    //// Function creating Multi-Line Chart ////
-    function multiLineChart() {
-        var margin = {top: 100, right: 30, bottom: 40, left: 90},
-            width = 1000 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
-
+        var line_margin = {top: 100, right: 30, bottom: 40, left: 90},
+            line_width = 1000 - line_margin.left - line_margin.right,
+            line_height = 500 - line_margin.top - line_margin.bottom;
+        
         // Append the svg object to the body of the page
-        var svg = d3.select("#lineChart")
+        var svgLine = d3.select("#lineChart")
         .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", line_width + line_margin.left + line_margin.right)
+            .attr("height", line_height + line_margin.top + line_margin.bottom)
         .append("g")
             .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
+                "translate(" + line_margin.left + "," + line_margin.top + ")");
+        
         // Prepare line chart data
-        var chartData = []
+        var export_lineData = []
+        var indicator_lineData = []
 
         for (var i=0;i<selectionYear.length;i++) {
             var filterYear = selectionYear[i]
-        
-            const updateData = data.filter(function(d) {
+
+            const export_filterData = export_country_dataRaw.filter(function(d) {
+                return d.year == filterYear 
+            });
+            const indicator_price_filterData = indicator_price_dataRaw.filter(function(d) {
                 return d.year == filterYear 
             });
 
             productionArray = []
             exportArray = []
+            indicator_priceArray = []
+            
 
-            updateData.map(function(d){ 
+            export_filterData.map(function(d){ 
                 var countryProduction = d.production
                 var countryExport = d.export_1k
                 productionArray.push(countryProduction)
                 exportArray.push(countryExport)
-            })
+            });
+            indicator_price_filterData.map(function(d){
+                var indicator_priceFilter = d.indicator_price
+                indicator_priceArray.push(indicator_priceFilter)
+            });
 
-            var totalProduction = Math.round(d3.sum(productionArray))
-            var totalExport = Math.round(d3.sum(exportArray))
+            var totalProduction = Math.round(d3.sum(productionArray));
+            var totalExport = Math.round(d3.sum(exportArray));
+            var averageIndicatorPrice = d3.sum(indicator_priceArray)/12;
 
-            chartData.push({
+            export_lineData.push({
                 year: filterYear,
                 production: totalProduction,
                 export: totalExport
-            })
+            });
+            indicator_lineData.push({
+                year: filterYear,
+                indicator_price: averageIndicatorPrice
+            });
         }
-        // console.log(chartData)
+        console.log(export_lineData)
+        console.log(indicator_lineData)
 
-        // Add X-axis
-        var x = d3.scaleLinear()
-            .domain([d3.min(chartData, function(d) {return d.year; }),
-                 d3.max(chartData, function(d) { return d.year; })])
-            .range([ 0, width ]);
+         // Add X-axis
+         var x = d3.scaleLinear()
+         .domain([d3.min(export_lineData, function(d) {return d.year; }),
+              d3.max(export_lineData, function(d) { return d.year; })])
+         .range([ 0, line_width ]);
 
-        svg.append("g")
+         svgLine.append("g")
             .attr("class", "xAxis")
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + line_height + ")")
             .call(d3.axisBottom(x).tickFormat(d3.format("d")));
 
-        // Add Y-axis
-        var y = d3.scaleLinear()
-            .domain([50000, d3.max(chartData, function(d) { return d.production; })])
-            .range([ height, 0 ]);
-        svg.append("g")
-            .attr("class", "yAxis")
-            .call(d3.axisLeft(y));
-        
+        // Add first Y-axis
+        var y1 = d3.scaleLinear()
+            .domain([50000, d3.max(export_lineData, function(d) { return d.production; })])
+            .range([ line_height, 0 ]);
+
+        svgLine.append("g")
+            .attr("class", "line1_yAxis")
+            .call(d3.axisLeft(y1));
+
+        // Add second Y-axis
+        var y2 = d3.scaleLinear()
+            .domain([30, d3.max(indicator_lineData, function(d) { return d.indicator_price; })])
+            .range([ line_height, 0 ]);
+
+        svgLine.append("g")
+            .attr("class", "line2_yAxis")
+            .attr("transform", "translate( " + line_width + ", 0 )")
+            .call(d3.axisRight(y2))
+
+        // Add production line
         var productionLine = d3.line()
                 .x(function(d) { return x(d.year) })
-                .y(function(d) { return y(d.production) })
-
-        var exportLine  = d3.line()
-                .x(function(d) { return x(d.year) })
-                .y(function(d) { return y(d.export) })
-
-        // Add the production line
-        svg
+                .y(function(d) { return y1(d.production) })
+        
+        svgLine
             .append("path")
-            .datum(chartData)
+            .datum(export_lineData)
             .attr("fill", "none")
             .attr("stroke", "#4490bd")
             .attr("stroke-width", 2)
             .attr("d", productionLine)
             .attr("class", "line")
-        
-        // Add the production line
-        svg
+
+        // Add export line
+        var exportLine  = d3.line()
+                .x(function(d) { return x(d.year) })
+                .y(function(d) { return y1(d.export) })
+
+        svgLine
             .append("path")
-            .datum(chartData)
+            .datum(export_lineData)
             .attr("fill", "none")
             .attr("stroke", "#d42e04")
             .attr("stroke-width", 2)
             .attr("d", exportLine)
             .attr("class", "line")
         
-        // Create rectangle to catch mouse movements
-        var mouseGraph = svg.append("g")
-            .attr("class", "mouse-over-effects");
-
-        mouseGraph.append("path") // this is the black vertical line to follow mouse
-            .attr("class", "mouse-line")
-            .style("stroke", "black")
-            .style("stroke-width", "1px")
-            .style("opacity", "0");
+        // Add indicator price line
+        var indicatorLine = d3.line()
+                .x(function(d) { return x(d.year) })
+                .y(function(d) { return y2(d.indicator_price)})
+        svgLine
+            .append("path")
+            .datum(indicator_lineData)
+            .attr("fill", "none")
+            .attr("stroke", "green")
+            .attr("stroke-width", 2)
+            .attr("d", indicatorLine)
+            .attr("class", "line")
+            .style("stroke-dasharray", ("3, 3"))
         
-        var lines = document.getElementsByClassName('line'); // Get lines on chart
+};
 
-        var mousePerLine = mouseGraph.selectAll('.mouse-per-line')
-            .data(chartData) 
-            .enter()
-            .append("g")
-            .attr("class", "mouse-per-line");
+        
+        // // Create rectangle to catch mouse movements
+        // var mouseGraph = svg.append("g")
+        //     .attr("class", "mouse-over-effects");
 
-        mousePerLine.append("text")
-            .attr("transform", "translate(10,3)");
+        // mouseGraph.append("path") // this is the black vertical line to follow mouse
+        //     .attr("class", "mouse-line")
+        //     .style("stroke", "black")
+        //     .style("stroke-width", "1px")
+        //     .style("opacity", "0");
+        
+        // var lines = document.getElementsByClassName('line'); // Get lines on chart
 
-        mouseGraph.append('svg:rect') // append a rect to catch mouse movements on canvas
-            .attr('width', width) // can't catch mouse events on a g element
-            .attr('height', height)
-            .attr('fill', 'none')
-            .attr('pointer-events', 'all')
-            .on('mouseout', function() { // on mouse out hide line, circles and text
-                d3.select(".mouse-line")
-                  .style("opacity", "0");
-                d3.selectAll(".mouse-per-line text")
-                  .style("opacity", "0");
-              })
-              .on('mouseover', function() { // on mouse in show line, circles and text
-                d3.select(".mouse-line")
-                  .style("opacity", "1");
-                d3.selectAll(".mouse-per-line text")
-                  .style("opacity", "1");
-              })
-              .on('mousemove', function() { // mouse moving over canvas
-                var mouse = d3.mouse(this);
-                d3.select(".mouse-line")
-                  .attr("d", function() {
-                    var d = "M" + mouse[0] + "," + height;
-                    d += " " + mouse[0] + "," + 0;
-                    return d;
-                  });
+        // var mousePerLine = mouseGraph.selectAll('.mouse-per-line')
+        //     .data(chartData) 
+        //     .enter()
+        //     .append("g")
+        //     .attr("class", "mouse-per-line");
 
-                  d3.selectAll(".mouse-per-line")
-                    .attr("transform", function(d, i) {
-                    // console.log(width/mouse[0])
-                    var xDate = x.invert(mouse[0]),
-                        bisect = d3.bisector(function(d) { return d.year; }).right;
-                        idx = bisect(d.production, xDate);
+        // mousePerLine.append("text")
+        //     .attr("transform", "translate(10,3)");
+
+        // mouseGraph.append('svg:rect') // append a rect to catch mouse movements on canvas
+        //     .attr('width', width) // can't catch mouse events on a g element
+        //     .attr('height', height)
+        //     .attr('fill', 'none')
+        //     .attr('pointer-events', 'all')
+        //     .on('mouseout', function() { // on mouse out hide line, circles and text
+        //         d3.select(".mouse-line")
+        //           .style("opacity", "0");
+        //         d3.selectAll(".mouse-per-line text")
+        //           .style("opacity", "0");
+        //       })
+        //       .on('mouseover', function() { // on mouse in show line, circles and text
+        //         d3.select(".mouse-line")
+        //           .style("opacity", "1");
+        //         d3.selectAll(".mouse-per-line text")
+        //           .style("opacity", "1");
+        //       })
+        //       .on('mousemove', function() { // mouse moving over canvas
+        //         var mouse = d3.mouse(this);
+        //         d3.select(".mouse-line")
+        //           .attr("d", function() {
+        //             var d = "M" + mouse[0] + "," + height;
+        //             d += " " + mouse[0] + "," + 0;
+        //             return d;
+        //           });
+
+        //           d3.selectAll(".mouse-per-line")
+        //             .attr("transform", function(d, i) {
+        //             // console.log(width/mouse[0])
+        //             var xDate = x.invert(mouse[0]),
+        //                 bisect = d3.bisector(function(d) { return d.year; }).right;
+        //                 idx = bisect(d.production, xDate);
                         
-                    var beginning = 0,
-                        // end = lines[i].getTotalLength(),
-                        target = null;
+        //             var beginning = 0,
+        //                 // end = lines[i].getTotalLength(),
+        //                 target = null;
                     
-                    var end = lines[i].getTotalLength()
-                    // console.log((beginning + end) / 2) 
+        //             var end = lines[i].getTotalLength()
+        //             // console.log((beginning + end) / 2) 
                         
-                    while (true){
+        //             while (true){
 
-                    target = Math.floor((beginning + end) / 2);
-                    pos = lines[i].getPointAtLength(target);
+        //             target = Math.floor((beginning + end) / 2);
+        //             pos = lines[i].getPointAtLength(target);
 
-                    if ((target == end || target == beginning) && pos.x !== mouse[0]) {
-                        break;
-                    }
+        //             if ((target == end || target == beginning) && pos.x !== mouse[0]) {
+        //                 break;
+        //             }
 
-                    if (pos.x > mouse[0]) { 
-                        end = target;
-                    }
-                    else if (pos.x < mouse[0]) {
-                        beginning = target;
-                    }
-                    else {
-                        break; //position found
-                    }
-                    }
+        //             if (pos.x > mouse[0]) { 
+        //                 end = target;
+        //             }
+        //             else if (pos.x < mouse[0]) {
+        //                 beginning = target;
+        //             }
+        //             else {
+        //                 break; //position found
+        //             }
+        //             }
             
-                    d3.select(this).select('text')
-                    .text(y.invert(pos.y).toFixed(2));
+        //             d3.select(this).select('text')
+        //             .text(y1.invert(pos.y).toFixed(2));
               
-                    return "translate(" + mouse[0] + "," + pos.y +")";
-                    });
-                });
+        //             return "translate(" + mouse[0] + "," + pos.y +")";
+        //             });
+        //         });
         
 
-    };
-    multiLineChart()
-})
-;
+//     };
+//     multiLineChart()
+// })
+// ;
 
 
-
-
-// Prep indicator price data
-d3.json("api/v1.0/indicator_prices").then(function(data){
-    
-    // Create array for years to caculate average ICO
-    indicator_yearList = []
-
-    for (var i=0;i<data.length;i++) {
-        var year = data[i]['year']
-
-        if (indicator_yearList.includes(year)) {}
-        else {
-            indicator_yearList.push(year)
-        }
-    };
-
-    // Create a function to find average ICO score //
-    var indicator_priceData = []
-
-    for (var i=0;i<indicator_yearList.length;i++) {
-        var filterYear = indicator_yearList[i]
-
-        const indicator_filterData = data.filter(function(d) {
-            return d.year == filterYear 
-        });
-
-        indicator_priceArray = []
-
-        indicator_filterData.map(function(d){
-            var indicator_priceFilter = d.indicator_price
-            indicator_priceArray.push(indicator_priceFilter)
-        })
-        
-        var averageIndicatorPrice = (d3.sum(indicator_priceArray)/12).toFixed(2)
-
-        indicator_priceData.push({
-            year: filterYear,
-            indicator_price: averageIndicatorPrice
-        })
-    }
-    console.log(indicator_priceData)
-})
 
 
 
