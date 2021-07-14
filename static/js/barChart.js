@@ -104,6 +104,8 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
 
                 d3.select("#"+d.country)
                 .style("opacity", ".5")
+
+                console.log(d.country)
             })
             .on("mouseleave", function(d) {
                 d3.select(this)

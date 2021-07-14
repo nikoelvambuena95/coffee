@@ -69,7 +69,7 @@ function choropleth(data) {
         .append("path")
             .attr("class", "country")
             .attr("id", function (d) {
-                return (d.properties.name + "_initial")
+                return (d.properties.name)
             })
             .attr("d", d3.geoPath()
                 .projection(projection)
@@ -181,7 +181,7 @@ function exportChoro() {
         // Create map data
         var exportData = data[1]
         
-        var selectYear = 1995
+        var selectYear = 1990
 
         var new_data = exportData.filter(function(d) {
             return d.year == selectYear
@@ -265,6 +265,9 @@ function updateProductionMap(inputYear) {
             .data(data[0].features)
             .enter()
             .append("path")
+                .attr("id", function (d) {
+                return (d.properties.name)
+                })
                 .attr("d", d3.geoPath()
                     .projection(projection)
                 )
@@ -327,6 +330,9 @@ function updateExportMap(inputYear) {
             .data(data[0].features)
             .enter()
             .append("path")
+                .attr("id", function (d) {
+                return (d.properties.name)
+                })
                 .attr("d", d3.geoPath()
                     .projection(projection)
                 )
