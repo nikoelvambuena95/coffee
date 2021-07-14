@@ -11,14 +11,14 @@ var svgLine = d3.select("#lineChart")
     .attr("transform",
         "translate(" + line_margin.left + "," + line_margin.top + ")");
 
-// Append the svg object to the body of the page
-var svg = d3.select("#lineChart")
-.append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-.append("g")
-    .attr("transform",
-        "translate(" + margin.left + "," + margin.top + ")");
+// // Append the svg object to the body of the page
+// var svg = d3.select("#lineChart")
+// .append("svg")
+//     .attr("width", width + margin.left + margin.right)
+//     .attr("height", height + margin.top + margin.bottom)
+// .append("g")
+//     .attr("transform",
+//         "translate(" + margin.left + "," + margin.top + ")");
 
 // Load data from API route
 var promises = [
@@ -91,8 +91,8 @@ function multilineChart(data) {
             indicator_price: averageIndicatorPrice
         });
     }
-    console.log(export_lineData)
-    console.log(indicator_lineData)
+    // console.log(export_lineData)
+    // console.log(indicator_lineData)
 
     // Add X-axis
     var x = d3.scaleLinear()
@@ -104,6 +104,14 @@ function multilineChart(data) {
        .attr("class", "xAxis")
        .attr("transform", "translate(0," + line_height + ")")
        .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+
+    // text label for the x axis
+    svg.append("text")             
+        .attr("transform",
+        "translate(" + (width/2) + " ," + 
+                       (height + margin.top + 20) + ")")
+        .style("text-anchor", "middle")
+        .text("Date");
 
     // Add first Y-axis
     var y1 = d3.scaleLinear()
@@ -160,9 +168,63 @@ function multilineChart(data) {
         .append("path")
         .datum(indicator_lineData)
         .attr("fill", "none")
-        .attr("stroke", "green")
+        .attr("stroke", "#12b828")
         .attr("stroke-width", 2)
         .attr("d", indicatorLine)
         .attr("class", "line")
         .style("stroke-dasharray", ("3, 3"))
 };
+
+// Create line chart legend
+
+// Set the dimensions and margins of the graph
+var legend_margin = {top: 60, right: 30, bottom: 40, left: 90},
+    legend_width = 300
+    legend_height = 150;
+
+// Append the svg object to the body of the page
+var svgLegend = d3.select("#line_legend")
+  .append("svg")
+    .attr("width", legend_width)
+    .attr("height", legend_height)
+  .append("g");
+
+// Create a dictionary of keys
+const line_keys = {
+    "legend_key": [
+        {"dataType" : "PRODUCTION", "color" : "#4490bd"},
+        {"dataType" : "EXPORT", "color" : "#d42e04"},
+        {"dataType" : "INDICATOR", "color" : "#12b828"},
+    ]
+};
+
+// Stringify dictionary of keys, parse JSON
+var legendData = JSON.stringify(line_keys)
+var data = JSON.parse(legendData)
+
+// Add square 
+var size = 20
+var square = svgLegend.selectAll("mySquares")
+    .data(data['legend_key']) // 'legend_key' JSON data object
+    .enter()
+    .append("rect")
+      .attr("x", 130)
+      .attr("y", function(d, i){ return 20 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("width", size)
+      .attr("height", size)
+      .style("fill", function(d){ return d.color})
+;
+
+// Add text
+var legendText = svgLegend.selectAll("mylabels")
+    .data(data['legend_key']) // 'legend_key' JSON data object
+    .enter()
+    .append("text")
+      .attr("x", 130 + size*1.2)
+      .attr("y", function(d,i){ return 20 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", "#050505")
+      .text(function(d){ return d.dataType})
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")
+;
+

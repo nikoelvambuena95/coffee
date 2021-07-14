@@ -16,10 +16,10 @@ div {
 #textAnalysis {
   position: absolute;
   right: 0px;
-  bottom: 0px;
+  bottom: 150px;
   width: 400px;
   height: 400px;
-  /* background-color: indianred; */
+  background-color: indianred;
 
 }
 
@@ -34,21 +34,19 @@ div {
   position: absolute; 
   top: 70px;
   right: -70px;
+  margin-top: 30px;
 }
 
-#bar_legend {
+#line_legend {
   position: absolute;
-  right: 10px;
-  top: 250px;
-  width: 300px;
-  height: 100px;
-  z-index: -1;
+  left: 10px;
+  bottom: 270px;
 }
 
 #filter {
   position: fixed;
   right: 50px;
-  bottom: 50px;
+  top: 0px;
 }
 
 body {

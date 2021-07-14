@@ -18,14 +18,13 @@ var svgLegend = d3.select("#legend")
     // + margin.top + margin.bottom
     )
   .append("g")
-    // .attr("transform",
-    //       "translate(" + margin.left + "," + margin.top + ")");
+  ;
 
 // Create a dictionary of keys
 const keys = {
     "legend_key": [
-        {"dataType" : "PRODUCTION", "color" : "#4490bd"},
-        {"dataType" : "EXPORT", "color" : "#d42e04"}
+        {"id" : "prod" , "dataType" : "select PRODUCTION", "color" : "#4490bd"},
+        {"id" : "exp" , "dataType" : "select EXPORT", "color" : "#d42e04"}
     ]
 };
 
@@ -39,9 +38,9 @@ var square = svgLegend.selectAll("mySquares")
     .data(data['legend_key']) // 'legend_key' JSON data object
     .enter()
     .append("rect")
-      .attr("class", function(d){ return d.dataType})
-      .attr("x", 10)
-      .attr("y", function(d, i){ return 15 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("class", function(d){ return d.id})
+      .attr("x", 100)
+      .attr("y", function(d, i){ return 20 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
       .attr("width", size)
       .attr("height", size)
       .style("fill", function(d){ return d.color})
@@ -54,9 +53,9 @@ var legendText = svgLegend.selectAll("mylabels")
     .data(data['legend_key']) // 'legend_key' JSON data object
     .enter()
     .append("text")
-      .attr("id", function(d){return "text_" + d.dataType})
-      .attr("x", 10 + size*1.2)
-      .attr("y", function(d,i){ return 15 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("id", function(d){return d.id})
+      .attr("x", 100 + size*1.2)
+      .attr("y", function(d,i){ return 20 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
       .style("fill", "#050505")
       .text(function(d){ return d.dataType})
       .attr("text-anchor", "left")
@@ -74,10 +73,11 @@ function mouseOver() {
   
   var textID  = d3.select(this).attr("class")
 
-  d3.select("#text_" + textID)
+  d3.select("#" + textID)
     .transition()
     .duration(200)
     .style("fill", function(d){return d.color})
+    .text("change data")
 }
 
 function mouseLeave() {
@@ -88,15 +88,16 @@ function mouseLeave() {
   
   var textID  = d3.select(this).attr("class")
 
-  d3.select("#text_" + textID)
+  d3.select("#" + textID)
     .transition()
     .duration(200)
     .style("fill", "#050505")
+    .text(function(d){return d.dataType})
 }
 
 // Filter data on legend
 svgLegend
-  .select(".EXPORT")
+  .select(".exp")
   .on("mouseover", mouseOver)
   .on("mouseleave", mouseLeave)
   .on("click", function(d){
@@ -106,7 +107,7 @@ svgLegend
   ;
 
 svgLegend
-  .select(".PRODUCTION")
+  .select(".prod")
   .on("mouseover", mouseOver)
   .on("mouseleave", mouseLeave)
   .on("click", function(d){

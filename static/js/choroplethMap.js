@@ -55,6 +55,10 @@ function choropleth(data) {
         mapData.set(new_data[i].country, new_data[i].production)
     };
 
+    console.log(mapData)
+    console.log(new_data)
+    // console.log(data[0].features)
+
     // Draw each country
     svgMap
         .append("g")
@@ -63,40 +67,25 @@ function choropleth(data) {
         .data(data[0].features)
         .enter()
         .append("path")
+            .attr("class", "country")
+            .attr("id", function (d) {
+                return (d.properties.name)
+            })
             .attr("d", d3.geoPath()
                 .projection(projection)
             )
             .attr("fill", function (d) {
                 d.total = mapData.get(d.properties.name) || 0;
-                return color(d.total);
+                // console.log(d.total)
+                    return color(d.total);
+            })
+            .style("opacity", function (d){
+                for (var i=0;i<d.length;i++) {
+                    console.log(d.properties)
+                };
+                return "1"
             })
             .style("stroke", "#1f1f1f")
-            .on("click", function (d) {
-                country = d.properties.name
-
-                var countryData = new_data.filter(function(d){
-                    return d.country == country
-                })
-                var countryExport = countryData[0].export_1k
-                var countryProduction = countryData[0].production
-                var countryYear = countryData[0].year
-                
-                // Create function that generates analysis text for each country
-                function mapAnalysis() {
-                    var updateText = "In " + countryYear +
-                    ", " + country + " produced " + 
-                    (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
-                    (Math.round(countryExport) * 1000) + " lbs. of coffee."
-
-                    var selectText = d3.select("#textUpdate")
-
-                    selectText.text(updateText)
-
-                }
-
-                mapAnalysis()
-            })
-
     
 };
 
@@ -134,12 +123,15 @@ function productionChoro() {
         svgMap
             .select(".worldChart").remove();
         svgMap
-            .append("g")
-            .attr("id", "worldChart")
+            .select(".worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
             .append("path")
+                .attr("class", "country")
+                .attr("id", function (d) {
+                    return (d.properties.name)
+                })
                 .attr("d", d3.geoPath()
                     .projection(projection)
                 )
@@ -185,7 +177,7 @@ function productionChoro() {
 
 function exportChoro() {
 
-    var color = d3.scaleThreshold()
+    var red_color = d3.scaleThreshold()
     .domain([500, 1000, 5000, 15000, 30000, 70000])
     .range(d3.schemeReds[7])
 
@@ -215,18 +207,20 @@ function exportChoro() {
         svgMap
             .select(".worldChart").remove();
         svgMap
-            .append("g")
-            .attr("id", "worldChart")
+            .select(".worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
             .append("path")
+                .attr("id", function (d) {
+                return (d.properties.name)
+            })
                 .attr("d", d3.geoPath()
                     .projection(projection)
                 )
                 .attr("fill", function (d) {
                     d.total = mapData.get(d.properties.name) || 0;
-                    return color(d.total);
+                    return red_color(d.total);
                 })
                 .style("stroke", "#1f1f1f")
                 .on("click", function (d) {

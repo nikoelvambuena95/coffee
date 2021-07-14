@@ -1,7 +1,7 @@
 // Set the dimensions and margins of the graph
-var margin = {top: 10, right: 10, bottom: 40, left: 90},
-    width = 470 - margin.left - margin.right,
-    height = 650 - margin.top - margin.bottom;
+var margin = {top: 30, right: 50, bottom: 40, left: 90},
+    width = 520 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
 // Append the svg object to the body of the page
 var svg = d3.select("#horizontal_bar")
@@ -56,12 +56,16 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
             return d3.descending(a.production, b.production)
         });
 
-    var xMax = new_data[0]['production']
+    // Slice data for Top 10
+    var top10 = new_data.slice(0, 10)
+    // console.log(top10)
+
+    var xMax = top10[0]['production']
 
     // Add X-axis
     var x = d3.scaleLinear()
         .domain([0, xMax])
-        .range([ 0, 300]);
+        .range([ 0, width]);
 
     svg
         .append("g")
@@ -75,7 +79,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
     // Add Y-axis
     var y = d3.scaleBand()
         .range([ 0, height ])
-        .domain(new_data.map(function(d) { return d.country; }))
+        .domain(top10.map(function(d) { return d.country; }))
         .padding(.3);
     
     svg
@@ -85,7 +89,7 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
     
     // Add Bars
     var bars = svg.selectAll("myRect")
-        .data(new_data)
+        .data(top10)
         .enter()
         .append("rect")
             .attr("class", "productionData")
@@ -94,6 +98,21 @@ data = d3.json("/api/v1.0/export_countries").then(function(data){
             .attr("width", function(d) { return x(d.production); })
             .attr("height", y.bandwidth() )
             .attr("fill", "#4490bd")
+            .on("mouseover", function(d) {
+                d3.select(this)
+                .style("opacity", ".5")
+
+                d3.select("#"+d.country)
+                .style("opacity", ".5")
+            })
+            .on("mouseleave", function(d) {
+                d3.select(this)
+                .style("opacity", "1")
+
+                d3.select("#"+d.country)
+                .style("opacity", "1")
+
+            })
     
     d3.select("#data_year").on("change", function(d){
        
@@ -156,8 +175,12 @@ function productionChart() {
             .sort(function (a, b){
                 return d3.descending(a.production, b.production)
             });
-    
-        var xMax = new_data[0]['production']
+
+        // Slice data for Top 10
+        var top10 = new_data.slice(0, 10)
+        console.log(top10)
+        
+        var xMax = top10[0]['production']
     
         // Add X-axis
         var x = d3.scaleLinear()
@@ -180,7 +203,7 @@ function productionChart() {
         // Add Y-axis
         var y = d3.scaleBand()
             .range([ 0, height ])
-            .domain(new_data.map(function(d) { return d.country; }))
+            .domain(top10.map(function(d) { return d.country; }))
             .padding(.3);
 
         svg
@@ -196,18 +219,31 @@ function productionChart() {
         svg
             .selectAll("rect").remove();// Remove bars from pervious chart
 
-        svg.selectAll("myRect")
-            .data(new_data)
+        svg
+            .selectAll("myRect")
+            .data(top10)
             .enter()
             .append("rect")
-                .transition()
-                .duration(1700)
                 .attr("class", "productionData")
                 .attr("x", x(0) )
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.production); })
                 .attr("height", y.bandwidth() )
-                .attr("fill", "#4490bd");
+                .attr("fill", "#4490bd")
+                .on("mouseover", function(d) {
+                    d3.select(this)
+                    .style("opacity", ".5")
+    
+                    d3.select("#"+d.country)
+                    .style("opacity", ".5")
+                })
+                .on("mouseleave", function(d) {
+                    d3.select(this)
+                    .style("opacity", "1")
+    
+                    d3.select("#"+d.country)
+                    .style("opacity", "1")
+                })
             
         d3.select("#data_year").on("change", function(d){
           
@@ -275,7 +311,11 @@ function exportChart() {
                 return d3.descending(a.export_1k, b.export_1k)
             });
     
-        var xMax = new_data[0]['export_1k']
+        // Slice data for Top 10
+        var top10 = new_data.slice(0, 10)
+        console.log(top10)
+        
+        var xMax = top10[0]['export_1k']
     
         // Add X-axis
         var x = d3.scaleLinear()
@@ -287,7 +327,7 @@ function exportChart() {
         svg
             .append("g")
                 .transition()
-                .duration(2000) 
+                .duration(2000)
                 .attr("class", "xAxis")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
@@ -298,7 +338,7 @@ function exportChart() {
         // Add Y-axis
         var y = d3.scaleBand()
             .range([ 0, height ])
-            .domain(new_data.map(function(d) { return d.country; }))
+            .domain(top10.map(function(d) { return d.country; }))
             .padding(.3);
         
         svg
@@ -315,17 +355,30 @@ function exportChart() {
         svg
             .selectAll("rect").remove();// Remove bars from pervious chart
         var bars = svg.selectAll("myRect")
-            .data(new_data)
+            .data(top10)
             .enter()
             .append("rect")
-                .transition()
-                .duration(1700)
                 .attr("class", "exportData")
                 .attr("x", x(0) )
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.export_1k); })
                 .attr("height", y.bandwidth() )
                 .attr("fill", "#d42e04")
+                .on("mouseover", function(d) {
+                    d3.select(this)
+                    .style("opacity", ".5")
+    
+                    d3.select("#"+d.country)
+                    .style("opacity", ".5")
+                })
+                .on("mouseleave", function(d) {
+                    d3.select(this)
+                    .style("opacity", "1")
+    
+                    d3.select("#"+d.country)
+                    .style("opacity", "1")
+    
+                })
             
         d3.select("#data_year").on("change", function(d){
             
@@ -358,9 +411,11 @@ function updateProductionBar(inputYear) {
         dataFilter.sort(function (a, b){
             return d3.descending(a.production, b.production)
             });
+
+        // Slice data for Top 10
+        var top10 = dataFilter.slice(0, 10)
         
-        // Update X-axis
-        var xMax = dataFilter[0]['production']
+        var xMax = top10[0]['production']
     
         var x = d3.scaleLinear()
         .domain([0, xMax])
@@ -383,7 +438,7 @@ function updateProductionBar(inputYear) {
         // Update Y-axis
         var y = d3.scaleBand()
         .range([ 0, height ])
-        .domain(dataFilter.map(function(d) { return d.country; }))
+        .domain(top10.map(function(d) { return d.country; }))
         .padding(.3);
 
         svg
@@ -399,14 +454,14 @@ function updateProductionBar(inputYear) {
         // When using the "bars" variable method similar to initial load, errors occurred //
         svg
             .selectAll("rect")
-            .data(dataFilter)
+            .data(top10)
                 .transition()
                 .duration(1000)
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.production); })
                 .attr("fill", "#4490bd");
     })
-}
+};
 
 
 function updateExportBar(inputYear) {
@@ -419,9 +474,11 @@ function updateExportBar(inputYear) {
         dataFilter.sort(function (a, b){
             return d3.descending(a.export_1k, b.export_1k)
             });
+
+        // Slice data for Top 10
+        var top10 = dataFilter.slice(0, 10)
         
-        // Update X-axis
-        var xMax = dataFilter[0]['export_1k']
+        var xMax = top10[0]['export_1k']
     
         var x = d3.scaleLinear()
         .domain([0, xMax])
@@ -444,7 +501,7 @@ function updateExportBar(inputYear) {
         // Update Y-axis
         var y = d3.scaleBand()
         .range([ 0, height ])
-        .domain(dataFilter.map(function(d) { return d.country; }))
+        .domain(top10.map(function(d) { return d.country; }))
         .padding(.3);
 
         svg
@@ -460,11 +517,11 @@ function updateExportBar(inputYear) {
         // When using the "bars" variable method similar to initial load, errors occurred //
         svg
             .selectAll("rect")
-            .data(dataFilter)
+            .data(top10)
                 .transition()
                 .duration(1000)
                 .attr("y", function(d) { return y(d.country); })
                 .attr("width", function(d) { return x(d.export_1k); })
                 .attr("fill", "#d42e04");
     })
-}
+};
