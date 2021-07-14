@@ -69,7 +69,7 @@ function choropleth(data) {
         .append("path")
             .attr("class", "country")
             .attr("id", function (d) {
-                return (d.properties.name)
+                return (d.properties.name + "_initial")
             })
             .attr("d", d3.geoPath()
                 .projection(projection)
@@ -92,6 +92,8 @@ function choropleth(data) {
 
 
 function productionChoro() {
+
+    svgMap.select("g").selectAll("path").remove();
 
     var color = d3.scaleThreshold()
     .domain([500, 1000, 5000, 15000, 30000, 70000])
@@ -121,9 +123,7 @@ function productionChoro() {
 
         // Draw each country
         svgMap
-            .select(".worldChart").remove();
-        svgMap
-            .select(".worldChart")
+            .select("#worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
@@ -149,24 +149,8 @@ function productionChoro() {
                     var countryExport = countryData[0].export_1k
                     var countryProduction = countryData[0].production
                     var countryYear = countryData[0].year
-                    
-                    // Create function that generates analysis text for each country
-                    function mapAnalysis() {
-                        var updateText = "In " + countryYear +
-                        ", " + country + " produced " + 
-                        (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
-                        (Math.round(countryExport) * 1000) + " lbs. of coffee."
-
-                        var selectText = d3.select("#textUpdate")
-
-                        selectText.text(updateText)
-
-                    }
-
-                    mapAnalysis()
                 })
     
-      
     };
 
 };
@@ -176,6 +160,10 @@ function productionChoro() {
 
 
 function exportChoro() {
+
+    console.log("Load Export Choropleth Map")
+
+    svgMap.select("g").selectAll("path").remove();
 
     var red_color = d3.scaleThreshold()
     .domain([500, 1000, 5000, 15000, 30000, 70000])
@@ -193,7 +181,7 @@ function exportChoro() {
         // Create map data
         var exportData = data[1]
         
-        var selectYear = 1990
+        var selectYear = 1995
 
         var new_data = exportData.filter(function(d) {
             return d.year == selectYear
@@ -203,11 +191,9 @@ function exportChoro() {
             mapData.set(new_data[i].country, new_data[i].export_1k)
         };
 
-        // Draw each country
+        // Draw each country    
         svgMap
-            .select(".worldChart").remove();
-        svgMap
-            .select(".worldChart")
+            .select("#worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
@@ -232,21 +218,6 @@ function exportChoro() {
                     var countryExport = countryData[0].export_1k
                     var countryProduction = countryData[0].production
                     var countryYear = countryData[0].year
-
-                    // Create function that generates analysis text for each country
-                    function mapAnalysis() {
-                        var updateText = "In " + countryYear +
-                        ", " + country + " produced " + 
-                        (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
-                        (Math.round(countryExport) * 1000) + " lbs. of coffee."
-
-                        var selectText = d3.select("#textUpdate")
-
-                        selectText.text(updateText)
-
-                    }
-
-                    mapAnalysis()
                 })
                 
     };
@@ -258,6 +229,8 @@ function exportChoro() {
 //// Create functions for filtering map data by year ////
 
 function updateProductionMap(inputYear) {
+
+    svgMap.select("g").selectAll("path").remove();
 
     var color = d3.scaleThreshold()
     .domain([500, 1000, 5000, 15000, 30000, 70000])
@@ -287,11 +260,7 @@ function updateProductionMap(inputYear) {
 
         // Draw each country
         svgMap
-            .select(".worldChart").remove();
-
-        svgMap
-            .append("g")
-            .attr("id", "worldChart")
+            .select("#worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
@@ -313,21 +282,6 @@ function updateProductionMap(inputYear) {
                     var countryExport = countryData[0].export_1k
                     var countryProduction = countryData[0].production
                     var countryYear = countryData[0].year
-                    
-                    // Create function that generates analysis text for each country
-                    function mapAnalysis() {
-                        var updateText = "In " + countryYear +
-                        ", " + country + " produced " + 
-                        (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
-                        (Math.round(countryExport) * 1000) + " lbs. of coffee."
-    
-                        var selectText = d3.select("#textUpdate")
-    
-                        selectText.text(updateText)
-    
-                    }
-    
-                    mapAnalysis()
                 })
       
     };
@@ -337,6 +291,8 @@ function updateProductionMap(inputYear) {
 
 
 function updateExportMap(inputYear) {
+
+    svgMap.select("g").selectAll("path").remove();
 
     var color = d3.scaleThreshold()
     .domain([500, 1000, 5000, 15000, 30000, 70000])
@@ -366,11 +322,7 @@ function updateExportMap(inputYear) {
 
         // Draw each country
         svgMap
-            .select(".worldChart").remove();
-
-        svgMap
-            .append("g")
-            .attr("id", "worldChart")
+            .select("#worldChart")
             .selectAll("path")
             .data(data[0].features)
             .enter()
@@ -392,21 +344,6 @@ function updateExportMap(inputYear) {
                     var countryExport = countryData[0].export_1k
                     var countryProduction = countryData[0].production
                     var countryYear = countryData[0].year
-                    
-                    // Create function that generates analysis text for each country
-                    function mapAnalysis() {
-                    var updateText = "In " + countryYear +
-                    ", " + country + " produced " + 
-                    (Math.round(countryProduction) * 1000) + " lbs. of coffe and exported " +
-                    (Math.round(countryExport) * 1000) + " lbs. of coffee."
-
-                    var selectText = d3.select("#textUpdate")
-
-                    selectText.text(updateText)
-
-                    }
-
-                    mapAnalysis()
                 });
             
     };
